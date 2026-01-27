@@ -3,10 +3,10 @@ import google.generativeai as genai
 from pypdf import PdfReader
 import os
 
-# --- CONFIGURACIÓN DE LA PÁGINA ---
+# --- CONFIGURACIÓN ---
 st.set_page_config(page_title="IA Career Manager", page_icon="🚀", layout="wide")
 
-# --- FUNCIÓN: EXTRACTOR DE PDF ---
+# --- FUNCIONES ---
 def extraer_texto_pdf(uploaded_file):
     try:
         reader = PdfReader(uploaded_file)
@@ -18,7 +18,6 @@ def extraer_texto_pdf(uploaded_file):
         st.error(f"Error leyendo el PDF: {e}")
         return None
 
-# --- FUNCIONES DE IA (Gemini) ---
 def consultar_gemini(prompt, api_key):
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-2.5-flash")
@@ -28,18 +27,16 @@ def consultar_gemini(prompt, api_key):
     except Exception as e:
         return f"Error en la API: {e}"
 
-# --- INTERFAZ GRÁFICA (SIDEBAR) ---
+# --- BARRA LATERAL (SIDEBAR) ---
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/4712/4712035.png", width=100)
     st.title("Panel de Control")
     
-    # --- GESTIÓN DE LA API KEY (MÉTODO SECRETO) ---
-    # 1. Buscamos la clave en los 'Secretos' de la nube (invisible para el cliente)
+    # 1. GESTIÓN DE LA API KEY
     if "GOOGLE_API_KEY" in st.secrets:
         api_key = st.secrets["AIzaSyAnhMnFYHcmdgGOZ54RESD3Ur9Mk3S6Hkc"]
-        st.success("✅ Licencia Activada (Servidor)")
+        st.success("✅ Licencia Activada")
     else:
-        # 2. Si estamos en tu ordenador local y no hay secretos, la pedimos manual
         api_key = st.text_input("Tu Google API Key", type="password")
         if not api_key:
             st.warning("⚠️ Introduce la clave para continuar.")
@@ -48,88 +45,61 @@ with st.sidebar:
     st.write("Carga el CV del cliente:")
     archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
 
-    # === SERVICIO 1: AUDITORÍA ===
+# --- LÓGICA PRINCIPAL (EL CEREBRO) ---
+st.title("🚀 Agencia de Empleo con IA - Girona")
+
+# 1. FRENO DE SEGURIDAD: Si no hay clave, paramos aquí.
+if not api_key:
+    st.info("👈 Por favor, configura tu API Key en el menú lateral.")
+    st.stop() # <--- ESTO EVITA EL ERROR
+
+# 2. FRENO DE SEGURIDAD: Si no hay PDF, paramos aquí.
+if not archivo_pdf:
+    st.info("👈 Sube un currículum en formato PDF para activar las herramientas.")
+    st.stop() # <--- ESTO EVITA EL ERROR "tab1 not defined"
+
+# 3. SI LLEGAMOS AQUÍ, ES QUE TODO ESTÁ BIEN
+texto_cv = extraer_texto_pdf(archivo_pdf)
+
+if texto_cv:
+    # Definimos las pestañas
+    tab1, tab2, tab3, tab4 = st.tabs(["🕵️ Auditoría", "📄 CV Visual", "✉️ Carta Premium", "🎤 Entrevistas"])
+
+    # === PESTAÑA 1: AUDITORÍA ===
     with tab1:
-        st.header("Auditoría ATS Implacable")
+        st.header("Auditoría ATS")
         if st.button("Analizar CV"):
-            with st.spinner("El reclutador virtual está juzgando el CV..."):
-                prompt = f"""
-                Actúa como un Reclutador Experto. Analiza este CV:
-                {texto_cv}
-                Dame un informe con:
-                1. PUNTUACIÓN (0-100).
-                2. 🚨 3 ERRORES CRÍTICOS.
-                3. 💡 FRASE DE VENTA para convencerle de contratar el servicio.
-                """
+            with st.spinner("Analizando..."):
+                prompt = f"Analiza este CV y dame nota (0-100), 3 errores y 1 consejo: {texto_cv}"
                 resultado = consultar_gemini(prompt, api_key)
                 st.markdown(resultado)
 
-    # === SERVICIO 2: CV VISUAL ===
+    # === PESTAÑA 2: CV VISUAL ===
     with tab2:
-        st.header("Generador de CV Visual (Una Cara)")
-        puesto_objetivo = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
-        
-        if st.button("Generar Diseño HTML"):
-            if not puesto_objetivo:
-                st.error("Indica el puesto objetivo.")
-            else:
-                with st.spinner("Diseñando y maquetando..."):
-                    prompt = f"""
-                    Crea un CV HTML5 profesional, moderno y CONDENSADO EN UNA SOLA CARA.
-                    Diseño doble columna (Izquierda oscura / Derecha blanca).
-                    Usa estos datos: {texto_cv}
-                    Objetivo: {puesto_objetivo}
-                    REGLA: Resume descripciones largas. SALIDA: Solo código HTML limpio.
-                    """
-                    html_code = consultar_gemini(prompt, api_key).replace("```html", "").replace("```", "")
-                    
-                    # Mostrar vista previa
-                    st.components.v1.html(html_code, height=800, scrolling=True)
-                    
-                    # Botón de descarga
-                    st.download_button(
-                        label="Descargar HTML para imprimir",
-                        data=html_code,
-                        file_name="cv_optimizado.html",
-                        mime="text/html"
-                    )
+        st.header("Diseño en 1 Cara")
+        puesto = st.text_input("Puesto Objetivo:")
+        if st.button("Generar HTML") and puesto:
+            with st.spinner("Diseñando..."):
+                prompt = f"Crea un CV HTML5 moderno de UNA SOLA CARA para {puesto} usando: {texto_cv}. Solo código HTML."
+                html = consultar_gemini(prompt, api_key).replace("```html", "").replace("```", "")
+                st.components.v1.html(html, height=800, scrolling=True)
+                st.download_button("Descargar HTML", html, "cv.html", "text/html")
 
-    # === SERVICIO 3: CARTA DE PRESENTACIÓN ===
+    # === PESTAÑA 3: CARTA ===
     with tab3:
-        st.header("Redactor de Cartas de Presentación")
-        oferta_trabajo = st.text_area("Pega aquí la descripción de la oferta de trabajo:")
-        
-        if st.button("Redactar Carta"):
-            if len(oferta_trabajo) < 10:
-                st.warning("Pega una oferta real.")
-            else:
-                with st.spinner("Conectando puntos..."):
-                    prompt = f"""
-                    Escribe una Carta de Presentación conectando este CV: {texto_cv}
-                    Con esta Oferta: {oferta_trabajo}
-                    Tono: Persuasivo y profesional.
-                    """
-                    carta = consultar_gemini(prompt, api_key)
-                    st.markdown(carta)
-                    st.download_button("Descargar Carta (.txt)", carta, "carta.txt")
+        st.header("Carta de Presentación")
+        oferta = st.text_area("Pega la oferta aquí:")
+        if st.button("Redactar Carta") and oferta:
+            with st.spinner("Escribiendo..."):
+                prompt = f"Escribe carta de presentación uniendo este CV: {texto_cv} con esta oferta: {oferta}"
+                carta = consultar_gemini(prompt, api_key)
+                st.markdown(carta)
 
-    # === SERVICIO 4: ENTREVISTA (NUEVO) ===
+    # === PESTAÑA 4: ENTREVISTA ===
     with tab4:
-        st.header("Entrenador de Entrevistas (Simulador)")
-        st.info("Genera las preguntas más difíciles que le harán basadas en SU experiencia.")
-        
-        if st.button("Generar Simulacro de Entrevista"):
-            with st.spinner("Analizando debilidades del perfil..."):
-                prompt = f"""
-                Actúa como un Jefe de Recursos Humanos duro. Basado en este CV:
-                {texto_cv}
-                
-                Genera una GUÍA DE PREPARACIÓN que incluya:
-                1. 👺 LA PREGUNTA TRAMPA: La pregunta más difícil basada en sus debilidades (ej: huecos temporales, poca experiencia).
-                2. 🎯 CÓMO RESPONDERLA: Un guion sugerido usando la técnica STAR.
-                3. ❓ 3 PREGUNTAS TÉCNICAS: Específicas de su sector.
-                4. 🧠 PREGUNTA PSICOLÓGICA: Para evaluar su encaje cultural.
-                """
-                entrevista = consultar_gemini(prompt, api_key)
-                st.markdown(entrevista)
-                st.download_button("Descargar Guía de Entrevista", entrevista, "guia_entrevista.txt")
+        st.header("Entrenador de Entrevistas")
+        if st.button("Generar Preguntas"):
+            with st.spinner("Pensando preguntas difíciles..."):
+                prompt = f"Genera 3 preguntas de entrevista difíciles basadas en las debilidades de este CV: {texto_cv}"
+                res = consultar_gemini(prompt, api_key)
+                st.markdown(res)
