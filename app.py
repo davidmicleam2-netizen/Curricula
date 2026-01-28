@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from pypdf import PdfReader
 import os
+import datetime
 
 # --- CONFIGURACIÓN ---
 st.set_page_config(page_title="IA Career Manager", page_icon="🚀", layout="wide")
@@ -67,13 +68,29 @@ if texto_cv:
     tab1, tab2, tab3, tab4 = st.tabs(["🕵️ Auditoría", "📄 CV Visual", "✉️ Carta Premium", "🎤 Entrevistas"])
 
     # === PESTAÑA 1: AUDITORÍA ===
-    with tab1:
-        st.header("Auditoría ATS")
-        if st.button("Analizar CV"):
-            with st.spinner("Analizando..."):
-                prompt = f"Analiza este CV y dame nota (0-100), 3 errores y 1 consejo: {texto_cv}"
-                resultado = consultar_gemini(prompt, api_key)
-                st.markdown(resultado)
+   # === PESTAÑA 1: AUDITORÍA ===
+with tab1:
+    st.header("Auditoría ATS")
+    if st.button("Analizar CV"):
+        with st.spinner("Analizando..."):
+            # AQUI ESTÁ EL TRUCO: Le decimos la fecha de hoy
+            fecha_hoy = datetime.date.today()
+
+            prompt = f"""
+            Actúa como un Reclutador Experto. Hoy es {fecha_hoy}.
+
+            IMPORTANTE: Calcula la edad y la experiencia basándote en que estamos en el año {fecha_hoy.year}.
+
+            Analiza este CV:
+            {texto_cv}
+
+            Dame un informe con:
+            1. PUNTUACIÓN (0-100).
+            2. 🚨 3 ERRORES CRÍTICOS.
+            3. 💡 FRASE DE VENTA.
+            """
+            resultado = consultar_gemini(prompt, api_key)
+            st.markdown(resultado)
 
     # === PESTAÑA 2: CV VISUAL ===
     with tab2:
