@@ -133,10 +133,10 @@ if texto_cv:
                 except Exception as e:
                     st.error(f"Error en el análisis: {e}")
 
-# === PESTAÑA 2: CV VISUAL (DISEÑO + REDACCIÓN PRO) ===
+# === PESTAÑA 2: CV VISUAL (OPTIMIZADO Y COMPACTO 1 PÁGINA) ===
     with tab2:
-        st.header("Generador de CV (Diseño + Mejora de Texto)")
-        st.info("Esta herramienta DISEÑA tu CV y además MEJORA lo que has escrito.")
+        st.header("Generador de CV (Diseño Pro + Texto Optimizado)")
+        st.info("Genera un CV de 1 sola página, con texto mejorado para ATS pero resumido.")
         
         puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
         
@@ -145,26 +145,33 @@ if texto_cv:
             if not texto_cv:
                 st.error("Primero sube un PDF en el menú lateral.")
             else:
-                with st.spinner("⏳ La IA está reescribiendo y diseñando tu perfil..."):
+                with st.spinner("⏳ Comprimiendo información y diseñando..."):
                     
                     prompt = f"""
-                    Actúa como un Experto en RRHH y Diseño Web.
-                    TU OBJETIVO: Crear un CV HTML5 de UNA PÁGINA que sea visualmente perfecto y TEXTUALMENTE PERSUASIVO.
+                    Actúa como un Experto en Maquetación de CVs.
+                    TU OBJETIVO: Crear un CV HTML5 que quepa ESTRICTAMENTE EN UNA SOLA PÁGINA A4.
+                    
+                    ¡IMPORTANTE! LA PRIORIDAD ES QUE QUEPA EN UNA CARA. SI EL TEXTO ES LARGO, RESUME AGRESIVAMENTE.
 
-                    >>> FASE 1: MEJORA DEL CONTENIDO (REDACCIÓN) <<<
-                    No te limites a copiar y pegar. MEJORA el texto original del candidato:
-                    1. PERFIL: Redacta un perfil profesional potente enfocado al puesto de '{puesto}'.
-                    2. EXPERIENCIA: Reescribe las funciones usando "Verbos de Acción" (ej: Gestioné, Optimicé, Lideré).
-                    3. LOGROS: Si el candidato menciona tareas vagas, transfórmalas en logros profesionales. (Ej: en vez de "hice facturas", pon "Gestión integral de facturación y control de albaranes").
-                    4. HABILIDADES: Añade 3-4 habilidades técnicas (Hard Skills) relevantes para '{puesto}' si encajan con el perfil (ej: Excel Avanzado, SAP, Gestión de Clientes).
+                    INSTRUCCIONES DE CONTENIDO (CALIDAD VS CANTIDAD):
+                    1. PERFIL: Máximo 3 líneas. Potente y directo.
+                    2. EXPERIENCIA: 
+                       - Solo las 3 experiencias más recientes o relevantes.
+                       - Máximo 3 "bullets" por trabajo.
+                       - Cada "bullet" debe ocupar solo 1 línea.
+                       - Usa verbos de acción (Lideré, Gestioné, Creé).
+                    3. EDUCACIÓN: Solo titulación superior. Elimina secundaria si hay universidad.
+                    4. HABILIDADES: Lista compacta de 5-6 palabras clave técnicas.
 
-                    >>> FASE 2: DISEÑO (CSS ESTRICTO) <<<
+                    INSTRUCCIONES DE DISEÑO (CSS COMPACTO):
                     - ESTRUCTURA: 'display: flex'. Dos columnas.
-                    - COLUMNA IZQUIERDA (Sidebar): Ancho 32%, Fondo #2c3e50, Texto blanco. Padding: 25px.
-                    - COLUMNA DERECHA: Ancho 68%, Fondo blanco, Texto #333. Padding: 30px.
-                    - FOTO: Incluye div circular 'photo-placeholder' (100x100px) centrado arriba a la izquierda.
-                    - TIPOGRAFÍA: Títulos en Mayúsculas (Sans-serif). Cuerpo legible (min 11px).
-                    - NOMBRE: Grande (24pt), color oscuro, en la columna derecha arriba.
+                    - COLUMNA IZQUIERDA (Sidebar): Ancho 30%, Fondo #2c3e50, Texto blanco. Padding: 20px.
+                    - COLUMNA DERECHA: Ancho 70%, Fondo blanco, Texto #333. Padding: 25px (reducido).
+                    - FOTO: Círculo 'photo-placeholder' de 100px.
+                    - FUENTES: Arial/Helvetica. 
+                    - TAMAÑO TEXTO: Cuerpo 11px (pequeño pero legible). Títulos 14px. Nombre 22pt.
+                    - INTERLINEADO: 1.3 (ajustado).
+                    - MÁRGENES: Reducidos para aprovechar el papel.
 
                     DATOS ORIGINALES:
                     {texto_cv}
@@ -178,17 +185,18 @@ if texto_cv:
                         html_code = consultar_gemini(prompt, api_key)
                         html_code = html_code.replace("```html", "").replace("```", "")
                         
-                        st.success("✅ ¡Texto mejorado y diseño listo!")
+                        st.success("✅ ¡CV Compactado y Optimizado!")
                         
                         st.download_button(
-                            label="📥 DESCARGAR CV OPTIMIZADO (.html)",
+                            label="📥 DESCARGAR CV 1 PÁGINA (.html)",
                             data=html_code,
-                            file_name=f"CV_Mejorado_{puesto.replace(' ', '_')}.html",
+                            file_name=f"CV_Compacto_{puesto.replace(' ', '_')}.html",
                             mime="text/html"
                         )
                         
                     except Exception as e:
                         st.error(f"Error: {e}")
+                        
     # === PESTAÑA 3: CARTA ===
     with tab3:
         st.header("Carta de Presentación")
