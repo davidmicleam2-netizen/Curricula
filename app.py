@@ -32,11 +32,12 @@ with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/4712/4712035.png", width=100)
     st.title("Panel de Control")
     
-    # 1. GESTIÓN DE LA API KEY
+   # 1. Buscamos la clave en los 'Secretos'
     if "GOOGLE_API_KEY" in st.secrets:
-       api_key = st.secrets["GOOGLE_API_KEY"]
-        st.success("✅ Licencia Activada")
+        api_key = st.secrets["GOOGLE_API_KEY"]
+        st.success("✅ Licencia Activada")  # <--- Fíjate que está alineado con la línea de arriba
     else:
+        # 2. Si estamos en local
         api_key = st.text_input("Tu Google API Key", type="password")
         if not api_key:
             st.warning("⚠️ Introduce la clave para continuar.")
