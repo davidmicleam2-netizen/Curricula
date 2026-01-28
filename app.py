@@ -67,30 +67,71 @@ if texto_cv:
     # Definimos las pestañas
     tab1, tab2, tab3, tab4 = st.tabs(["🕵️ Auditoría", "📄 CV Visual", "✉️ Carta Premium", "🎤 Entrevistas"])
 
-    # === PESTAÑA 1: AUDITORÍA ===
-   # === PESTAÑA 1: AUDITORÍA ===
-with tab1:
-    st.header("Auditoría ATS")
-    if st.button("Analizar CV"):
-        with st.spinner("Analizando..."):
-            # AQUI ESTÁ EL TRUCO: Le decimos la fecha de hoy
-            fecha_hoy = datetime.date.today()
+ # === PESTAÑA 1: AUDITORÍA (MODO JUEZ ESTRICTO) ===
+    with tab1:
+        st.header("Auditoría ATS Profesional")
+        st.info("Este sistema evalúa el CV con criterios objetivos de mercado.")
+        
+        if st.button("Auditar CV ahora"):
+            with st.spinner("Aplicando rúbrica de evaluación estandarizada..."):
+                
+                # FECHA ACTUAL PARA EL CÁLCULO DE EDAD
+                fecha_hoy = datetime.date.today()
 
-            prompt = f"""
-            Actúa como un Reclutador Experto. Hoy es {fecha_hoy}.
+                # CONFIGURACIÓN: Temperatura 0 para eliminar la aleatoriedad
+                config_auditor = genai.GenerationConfig(
+                    temperature=0.0,
+                    top_p=1.0,
+                    max_output_tokens=1000,
+                )
 
-            IMPORTANTE: Calcula la edad y la experiencia basándote en que estamos en el año {fecha_hoy.year}.
+                prompt = f"""
+                Actúa como un Algoritmo ATS (Applicant Tracking System) estricto y objetivo.
+                Fecha actual: {fecha_hoy}.
+                
+                TU TAREA: Evaluar este CV basándote EXCLUSIVAMENTE en la siguiente RÚBRICA DE PUNTUACIÓN (Total 100 puntos):
 
-            Analiza este CV:
-            {texto_cv}
+                1. ESTRUCTURA Y FORMATO (Máx 20 pts):
+                   - ¿Es legible? ¿Tiene secciones claras? ¿Usa viñetas?
+                2. PALABRAS CLAVE Y SEO (Máx 20 pts):
+                   - ¿Menciona tecnologías o habilidades duras específicas del sector?
+                3. IMPACTO Y LOGROS (Máx 30 pts):
+                   - ¿Usa verbos de acción? ¿Hay métricas/números (%, €)? (Si solo lista tareas, penaliza mucho).
+                4. EXPERIENCIA Y COHERENCIA (Máx 20 pts):
+                   - ¿Las fechas tienen sentido según la fecha actual ({fecha_hoy.year})? ¿Hay lagunas sin explicar?
+                5. ORTOGRAFÍA Y REDACCIÓN (Máx 10 pts):
+                   - Penaliza errores gramaticales o frases vacías.
 
-            Dame un informe con:
-            1. PUNTUACIÓN (0-100).
-            2. 🚨 3 ERRORES CRÍTICOS.
-            3. 💡 FRASE DE VENTA.
-            """
-            resultado = consultar_gemini(prompt, api_key)
-            st.markdown(resultado)
+                CV DEL CANDIDATO:
+                {texto_cv}
+
+                FORMATO DE SALIDA REQUERIDO:
+                ---
+                ## 📊 PUNTUACIÓN TOTAL: [SUMA DE PUNTOS]/100
+                
+                ### DESGLOSE:
+                * **Estructura:** [X]/20
+                * **Palabras Clave:** [X]/20
+                * **Logros:** [X]/30
+                * **Experiencia:** [X]/20
+                * **Redacción:** [X]/10
+                
+                ### 🚨 3 ERRORES CRÍTICOS DETECTADOS:
+                1. [Error 1]
+                2. [Error 2]
+                3. [Error 3]
+
+                ### 💡 EL CONSEJO DE ORO:
+                [Una frase directa sobre qué cambiar ya mismo para subir nota]
+                """
+                
+                # Usamos el modelo configurado con temperatura 0
+                model = genai.GenerativeModel("gemini-1.5-flash", generation_config=config_auditor)
+                try:
+                    response = model.generate_content(prompt)
+                    st.markdown(response.text)
+                except Exception as e:
+                    st.error(f"Error en el análisis: {e}")
 
     # === PESTAÑA 2: CV VISUAL ===
     with tab2:
