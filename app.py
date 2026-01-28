@@ -34,7 +34,7 @@ with st.sidebar:
     
     # 1. GESTIÓN DE LA API KEY
     if "GOOGLE_API_KEY" in st.secrets:
-        api_key = st.secrets["AIzaSyAnhMnFYHcmdgGOZ54RESD3Ur9Mk3S6Hkc"]
+       api_key = st.secrets["GOOGLE_API_KEY"]
         st.success("✅ Licencia Activada")
     else:
         api_key = st.text_input("Tu Google API Key", type="password")
