@@ -133,11 +133,10 @@ if texto_cv:
                 except Exception as e:
                     st.error(f"Error en el análisis: {e}")
 
-    # === PESTAÑA 2: CV VISUAL ===
-    # === PESTAÑA 2: CV VISUAL (MODO 1 PÁGINA ESTRICTO) ===
+  # === PESTAÑA 2: CV VISUAL (MODO DISEÑO PREMIUM A4) ===
     with tab2:
-        st.header("Generador de CV Compacto (1 Página)")
-        st.info("Esta herramienta condensa tu información para que quepa en una sola cara A4.")
+        st.header("Generador de CV (Diseño Ejecutivo)")
+        st.info("Genera un diseño limpio, legible y que ocupa toda la página A4.")
         
         puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
         
@@ -146,49 +145,51 @@ if texto_cv:
             if not texto_cv:
                 st.error("Primero sube un PDF en el menú lateral.")
             else:
-                with st.spinner("⏳ Comprimiendo texto y diseñando maquetación..."):
+                with st.spinner("⏳ Diseñando maquetación profesional..."):
                     
-                    # PROMPT TÉCNICO PARA FORZAR 1 PÁGINA
+                    # PROMPT CORREGIDO: MENOS COMPRESIÓN, MÁS LEGIBILIDAD
                     prompt = f"""
-                    Actúa como un Maquetador Web Experto y Redactor Senior.
-                    TU OBJETIVO SUPREMO: Generar un CV en HTML5 que quepa ESTRICTAMENTE EN UNA SOLA PÁGINA A4.
+                    Actúa como un Diseñador Gráfico Senior.
+                    TU OBJETIVO: Generar un CV en HTML5 elegante que LLENE VISUALMENTE una página A4.
+                    
+                    NO uses letra minúscula. Quiero que se lea bien impreso.
 
-                    INSTRUCCIONES DE CONTENIDO (RESUMEN AGRESIVO):
-                    1. Si las descripciones son largas, RESÚMELAS a 1 línea.
-                    2. Máximo 3 "bullets" por experiencia laboral.
-                    3. Elimina información irrelevante o muy antigua si ocupa espacio.
-                    4. Perfil profesional: Máximo 3 líneas.
+                    INSTRUCCIONES DE CONTENIDO:
+                    1. Resume solo si es estrictamente necesario, pero mantén el detalle importante.
+                    2. Destaca los logros con negritas.
+                    3. Usa un lenguaje profesional y persuasivo.
 
                     INSTRUCCIONES DE DISEÑO (CSS OBLIGATORIO):
-                    - Usa la fuente 'Arial' o 'Helvetica'.
-                    - TAMAÑO DE FUENTE BASE: 11px (o 10pt). Títulos: 14px.
-                    - MÁRGENES: padding: 15px (muy estrechos).
-                    - INTERLINEADO: line-height: 1.3 (compacto).
-                    - Estructura: Doble columna (Sidebar izquierda 30% gris oscuro / Contenido derecha 70% blanco).
-                    - @page {{ size: A4; margin: 0; }} para impresión perfecta.
+                    - Fuente: 'Helvetica Neue', Helvetica, Arial, sans-serif.
+                    - TAMAÑO DE FUENTE CUERPO: 12pt (o 14px). ¡NO MENOS!
+                    - TÍTULO (NOMBRE): 28pt (Grande e impactante).
+                    - SUBTÍTULOS: 16pt, color azul oscuro (#2c3e50), con margen superior.
+                    - INTERLINEADO: 1.5 (Para que respire y ocupe espacio).
+                    - DISEÑO: Doble columna (Izquierda 30% color #2c3e50 texto blanco / Derecha 70% blanco texto oscuro).
+                    - PADDING: 40px (Márgenes generosos).
+                    - ALTO: min-height: 297mm (Forzar altura A4).
 
                     DATOS DEL CANDIDATO:
                     {texto_cv}
 
                     OBJETIVO PROFESIONAL: {puesto}
 
-                    SALIDA: Devuelve ÚNICAMENTE el código HTML completo. Sin markdown, sin explicaciones.
+                    SALIDA: Devuelve ÚNICAMENTE el código HTML completo dentro de etiquetas html.
                     """
                     
                     try:
                         # Llamamos a la IA
                         html_code = consultar_gemini(prompt, api_key)
                         
-                        # Limpiamos el código por si la IA pone ```html al principio
+                        # Limpieza de seguridad
                         html_code = html_code.replace("```html", "").replace("```", "")
                         
-                        # --- SOLO MOSTRAMOS EL BOTÓN ---
                         st.success("✅ ¡Diseño completado! Descárgalo aquí:")
                         
                         st.download_button(
-                            label="📥 DESCARGAR CV OPTIMIZADO (.html)",
+                            label="📥 DESCARGAR CV PRO (.html)",
                             data=html_code,
-                            file_name=f"CV_Optimizado_{puesto.replace(' ', '_')}.html",
+                            file_name=f"CV_{puesto.replace(' ', '_')}.html",
                             mime="text/html"
                         )
                         
