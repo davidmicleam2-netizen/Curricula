@@ -48,7 +48,7 @@ with st.sidebar:
     archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
 
 # --- LÓGICA PRINCIPAL (EL CEREBRO) ---
-st.title("🚀 Agencia de Empleo con IA - Girona")
+st.title("🚀 Agencia de Empleo con IA ")
 
 # 1. FRENO DE SEGURIDAD: Si no hay clave, paramos aquí.
 if not api_key:
