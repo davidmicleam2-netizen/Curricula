@@ -225,50 +225,53 @@ if texto_cv:
                     except Exception as e:
                         st.error(f"Error redactando: {e}")
 
-   # === PESTAÑA 4: ENTRENADOR DE ENTREVISTAS (SIMULADOR ESTRATÉGICO) ===
+ # === PESTAÑA 4: ENTRENADOR DE ENTREVISTAS (MODO CHULETA RÁPIDA) ===
     with tab4:
-        st.header("Entrenador de Entrevistas IA")
-        st.info("Genera una 'Chuleta' estratégica para tener las respuestas preparadas antes de entrar.")
+        st.header("Entrenador de Entrevistas (Modo Flashcard)")
+        st.info("Genera una guía ultra-rápida para leer 5 minutos antes de entrar.")
         
         col1, col2 = st.columns(2)
         with col1:
-            cargo_entrevista = st.text_input("Puesto al que aplicas:", placeholder="Ej: Jefe de Almacén")
+            cargo_entrevista = st.text_input("Puesto al que aplicas:", placeholder="Ej: Dependiente")
         with col2:
-            empresa_entrevista = st.text_input("Empresa:", placeholder="Ej: Amazon")
+            empresa_entrevista = st.text_input("Empresa:", placeholder="Ej: Zara")
             
-        oferta_entrevista = st.text_area("Pega la descripción de la oferta (Opcional pero recomendado para más precisión):", height=150)
+        oferta_entrevista = st.text_area("Pega la descripción de la oferta (Opcional):", height=100)
         
-        if st.button("Generar Guía de Preparación") and cargo_entrevista:
+        if st.button("Generar Chuleta Rápida") and cargo_entrevista:
             if not texto_cv:
                 st.error("Primero sube tu CV en el menú lateral.")
             else:
-                with st.spinner("🧠 Simulando entrevista y redactando tus mejores respuestas..."):
+                with st.spinner("⚡ Sintetizando las mejores respuestas..."):
                     
                     prompt = f"""
-                    Actúa como un Coach de Carrera experto y preparador de entrevistas de alto nivel.
-                    TU OBJETIVO: Preparar una GUÍA ESTRATÉGICA (Chuleta) para que el candidato apruebe la entrevista para {cargo_entrevista} en {empresa_entrevista}.
+                    Actúa como un Preparador de Entrevistas.
+                    TU OBJETIVO: Crear una "CHULETA" (Cheat Sheet) esquemática y muy breve.
+                    NO ESCRIBAS PÁRRAFOS LARGOS. USA UN ESTILO DIRECTO Y VISUAL.
 
-                    DATOS:
+                    CONTEXTO:
+                    - Puesto: {cargo_entrevista} en {empresa_entrevista}
                     - CV: {texto_cv}
-                    - OFERTA: {oferta_entrevista}
+                    - Oferta: {oferta_entrevista}
 
-                    GENERAR EL SIGUIENTE INFORME:
+                    GENERAR:
 
-                    1. 🎤 EL "ELEVATOR PITCH" (MÁXIMO IMPACTO):
-                       Escribe un guion de presentación de 60 segundos para responder a "Háblame de ti".
-                       Conecta el pasado del candidato con este puesto futuro. Tono seguro y profesional.
+                    1. ⚡ EL PITCH DE 45 SEGUNDOS:
+                       Escribe un párrafo de MÁXIMO 4 LÍNEAS para responder "Háblame de ti". Ve al grano: Quién soy + Logro Clave + Por qué yo.
 
-                    2. 🔥 LAS 3 PREGUNTAS TÉCNICAS PROBABLES:
-                       Basándote en la oferta, predice 3 preguntas difíciles específicas del puesto y redacta la "Respuesta Modelo" ideal usando la experiencia del CV.
+                    2. 🥊 3 PREGUNTAS CLAVE (Formato S.A.R. Rápido):
+                       Identifica 3 preguntas probables y da la respuesta en este formato ESQUEMÁTICO:
+                       * ❓ Pregunta: [La pregunta]
+                       * 💡 Idea Clave: [1 frase sobre qué responder]
+                       * 🗣️ Ejemplo rápido: "En mi experiencia X, hice Y logrando Z". (Máximo 2 líneas).
 
-                    3. 🛡️ LA PREGUNTA "TRAMPA" (Y CÓMO DEFENDERSE):
-                       Identifica una debilidad en el CV (huecos, falta de experiencia, edad, cambios de sector) que el entrevistador podría atacar.
-                       Escribe la mejor defensa diplomática para convertirlo en algo positivo.
+                    3. 🛡️ DEFENSA CONTRA DEBILIDAD:
+                       Identifica el punto débil del CV y escribe 1 FRASE CONTUNDENTE para defenderlo.
 
-                    4. 🧠 2 PREGUNTAS INTELIGENTES PARA HACER AL FINAL:
-                       Escribe 2 preguntas que el candidato debe hacerle al entrevistador para demostrar interés y proactividad (Nada de preguntar por el sueldo/vacaciones).
+                    4. 🧠 2 PREGUNTAS PARA EL RECLUTADOR:
+                       2 preguntas cortas e inteligentes para hacer al final.
 
-                    FORMATO: Usa Markdown, negritas y emojis para que sea fácil de leer en el móvil antes de entrar.
+                    FORMATO: Usa muchos emojis, negritas y listas. Debe leerse en 60 segundos.
                     """
                     
                     try:
@@ -276,9 +279,9 @@ if texto_cv:
                         st.markdown(guia)
                         
                         st.download_button(
-                            label="📥 Descargar Guía de Entrevista (.txt)",
+                            label="📥 Descargar Chuleta (.txt)",
                             data=guia,
-                            file_name=f"Guia_Entrevista_{cargo_entrevista}.txt",
+                            file_name=f"Chuleta_Express_{cargo_entrevista}.txt",
                             mime="text/plain"
                         )
                         
