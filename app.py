@@ -82,7 +82,7 @@ if texto_cv:
                 config_auditor = genai.GenerationConfig(
                     temperature=0.0,
                     top_p=1.0,
-                    max_output_tokens=1000,
+                    max_output_tokens=8100,
                 )
 
                 prompt = f"""
