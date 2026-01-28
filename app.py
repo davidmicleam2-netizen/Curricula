@@ -166,21 +166,121 @@ if texto_cv:
                     except Exception as e:
                         st.error(f"Error: {e}")
                         
-    # === PESTAÑA 3: CARTA ===
+   # === PESTAÑA 3: CARTA DE PRESENTACIÓN PREMIUM (EL FRANCOTIRADOR) ===
     with tab3:
-        st.header("Carta de Presentación")
-        oferta = st.text_area("Pega la oferta aquí:")
-        if st.button("Redactar Carta") and oferta:
-            with st.spinner("Escribiendo..."):
-                prompt = f"Escribe carta de presentación uniendo este CV: {texto_cv} con esta oferta: {oferta}"
-                carta = consultar_gemini(prompt, api_key)
-                st.markdown(carta)
+        st.header("Redactor de Cartas de Alto Impacto")
+        st.info("Esta herramienta analiza la oferta y redacta una carta que 'hackea' la psicología del reclutador.")
+        
+        col1, col2 = st.columns([1, 1])
+        
+        with col1:
+            empresa = st.text_input("Nombre de la Empresa:", placeholder="Ej: Google, Zara, Mercadona")
+        with col2:
+            tono = st.selectbox("Tono de la Carta:", ["Profesional y Corporativo", "Moderno y Creativo", "Directo y Persuasivo"])
 
-    # === PESTAÑA 4: ENTREVISTA ===
+        oferta = st.text_area("Pega aquí la DESCRIPCIÓN COMPLETA de la oferta de trabajo:", height=200, placeholder="Copia y pega los requisitos y responsabilidades de la oferta...")
+        
+        if st.button("Redactar Carta Premium") and oferta and empresa:
+            if not texto_cv:
+                st.error("Primero sube tu CV en el menú lateral.")
+            else:
+                with st.spinner("🕵️‍♂️ Analizando la oferta y buscando coincidencias en tu perfil..."):
+                    
+                    # PROMPT DE INGENIERÍA SOCIAL
+                    prompt = f"""
+                    Actúa como un Copywriter experto en Ventas y RRHH.
+                    TU OBJETIVO: Escribir una carta de presentación IRRESISTIBLE para la empresa {empresa}.
+                    
+                    TONO ELEGIDO: {tono}.
+
+                    DATOS:
+                    - CV DEL CANDIDATO: {texto_cv}
+                    - OFERTA DE TRABAJO: {oferta}
+
+                    INSTRUCCIONES DE ESTRUCTURA (NO HAGAS LA TÍPICA CARTA ABURRIDA):
+                    1. SALUDO: Si no hay nombre, usa algo profesional pero cercano.
+                    2. EL GANCHO (Párrafo 1): No empieces con "Le escribo para...". Empieza mencionando un dolor/necesidad que leíste en la oferta y cómo te entusiasma resolverlo.
+                    3. LA EVIDENCIA (Párrafo 2): Elige UN logro o habilidad del CV que coincida EXACTAMENTE con el requisito más difícil de la oferta. Usa la técnica "Problema -> Acción -> Resultado".
+                    4. EL CIERRE (CTA): Nada de "espero su respuesta". Propón una reunión breve para explicar cómo puedes aportar valor desde el día 1.
+                    
+                    BONUS OBLIGATORIO:
+                    Al final, separada por una línea, escribe una "Opción de Mensaje Corto para LinkedIn" (max 300 caracteres) para enviar al reclutador directamente.
+
+                    IDIOMA: Español de España (Neutro y profesional).
+                    """
+                    
+                    try:
+                        resultado = consultar_gemini(prompt, api_key)
+                        
+                        st.subheader("📝 Tu Carta Personalizada")
+                        st.markdown(resultado)
+                        
+                        st.download_button(
+                            label="📥 Descargar Carta (.txt)",
+                            data=resultado,
+                            file_name=f"Carta_para_{empresa}.txt",
+                            mime="text/plain"
+                        )
+                        
+                    except Exception as e:
+                        st.error(f"Error redactando: {e}")
+
+   # === PESTAÑA 4: ENTRENADOR DE ENTREVISTAS (SIMULADOR ESTRATÉGICO) ===
     with tab4:
-        st.header("Entrenador de Entrevistas")
-        if st.button("Generar Preguntas"):
-            with st.spinner("Pensando preguntas difíciles..."):
-                prompt = f"Genera 3 preguntas de entrevista difíciles basadas en las debilidades de este CV: {texto_cv}"
-                res = consultar_gemini(prompt, api_key)
-                st.markdown(res)
+        st.header("Entrenador de Entrevistas IA")
+        st.info("Genera una 'Chuleta' estratégica para tener las respuestas preparadas antes de entrar.")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            cargo_entrevista = st.text_input("Puesto al que aplicas:", placeholder="Ej: Jefe de Almacén")
+        with col2:
+            empresa_entrevista = st.text_input("Empresa:", placeholder="Ej: Amazon")
+            
+        oferta_entrevista = st.text_area("Pega la descripción de la oferta (Opcional pero recomendado para más precisión):", height=150)
+        
+        if st.button("Generar Guía de Preparación") and cargo_entrevista:
+            if not texto_cv:
+                st.error("Primero sube tu CV en el menú lateral.")
+            else:
+                with st.spinner("🧠 Simulando entrevista y redactando tus mejores respuestas..."):
+                    
+                    prompt = f"""
+                    Actúa como un Coach de Carrera experto y preparador de entrevistas de alto nivel.
+                    TU OBJETIVO: Preparar una GUÍA ESTRATÉGICA (Chuleta) para que el candidato apruebe la entrevista para {cargo_entrevista} en {empresa_entrevista}.
+
+                    DATOS:
+                    - CV: {texto_cv}
+                    - OFERTA: {oferta_entrevista}
+
+                    GENERAR EL SIGUIENTE INFORME:
+
+                    1. 🎤 EL "ELEVATOR PITCH" (MÁXIMO IMPACTO):
+                       Escribe un guion de presentación de 60 segundos para responder a "Háblame de ti".
+                       Conecta el pasado del candidato con este puesto futuro. Tono seguro y profesional.
+
+                    2. 🔥 LAS 3 PREGUNTAS TÉCNICAS PROBABLES:
+                       Basándote en la oferta, predice 3 preguntas difíciles específicas del puesto y redacta la "Respuesta Modelo" ideal usando la experiencia del CV.
+
+                    3. 🛡️ LA PREGUNTA "TRAMPA" (Y CÓMO DEFENDERSE):
+                       Identifica una debilidad en el CV (huecos, falta de experiencia, edad, cambios de sector) que el entrevistador podría atacar.
+                       Escribe la mejor defensa diplomática para convertirlo en algo positivo.
+
+                    4. 🧠 2 PREGUNTAS INTELIGENTES PARA HACER AL FINAL:
+                       Escribe 2 preguntas que el candidato debe hacerle al entrevistador para demostrar interés y proactividad (Nada de preguntar por el sueldo/vacaciones).
+
+                    FORMATO: Usa Markdown, negritas y emojis para que sea fácil de leer en el móvil antes de entrar.
+                    """
+                    
+                    try:
+                        guia = consultar_gemini(prompt, api_key)
+                        st.markdown(guia)
+                        
+                        st.download_button(
+                            label="📥 Descargar Guía de Entrevista (.txt)",
+                            data=guia,
+                            file_name=f"Guia_Entrevista_{cargo_entrevista}.txt",
+                            mime="text/plain"
+                        )
+                        
+                    except Exception as e:
+                        st.error(f"Error en la simulación: {e}")
