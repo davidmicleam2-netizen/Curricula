@@ -134,15 +134,66 @@ if texto_cv:
                     st.error(f"Error en el análisis: {e}")
 
     # === PESTAÑA 2: CV VISUAL ===
+    # === PESTAÑA 2: CV VISUAL (MODO 1 PÁGINA ESTRICTO) ===
     with tab2:
-        st.header("Diseño en 1 Cara")
-        puesto = st.text_input("Puesto Objetivo:")
-        if st.button("Generar HTML") and puesto:
-            with st.spinner("Diseñando..."):
-                prompt = f"Crea un CV HTML5 moderno de UNA SOLA CARA para {puesto} usando: {texto_cv}. Solo código HTML."
-                html = consultar_gemini(prompt, api_key).replace("```html", "").replace("```", "")
-                st.components.v1.html(html, height=800, scrolling=True)
-                st.download_button("Descargar HTML", html, "cv.html", "text/html")
+        st.header("Generador de CV Compacto (1 Página)")
+        st.info("Esta herramienta condensa tu información para que quepa en una sola cara A4.")
+        
+        puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
+        
+        # Botón de acción
+        if st.button("Generar Archivo HTML") and puesto:
+            if not texto_cv:
+                st.error("Primero sube un PDF en el menú lateral.")
+            else:
+                with st.spinner("⏳ Comprimiendo texto y diseñando maquetación..."):
+                    
+                    # PROMPT TÉCNICO PARA FORZAR 1 PÁGINA
+                    prompt = f"""
+                    Actúa como un Maquetador Web Experto y Redactor Senior.
+                    TU OBJETIVO SUPREMO: Generar un CV en HTML5 que quepa ESTRICTAMENTE EN UNA SOLA PÁGINA A4.
+
+                    INSTRUCCIONES DE CONTENIDO (RESUMEN AGRESIVO):
+                    1. Si las descripciones son largas, RESÚMELAS a 1 línea.
+                    2. Máximo 3 "bullets" por experiencia laboral.
+                    3. Elimina información irrelevante o muy antigua si ocupa espacio.
+                    4. Perfil profesional: Máximo 3 líneas.
+
+                    INSTRUCCIONES DE DISEÑO (CSS OBLIGATORIO):
+                    - Usa la fuente 'Arial' o 'Helvetica'.
+                    - TAMAÑO DE FUENTE BASE: 11px (o 10pt). Títulos: 14px.
+                    - MÁRGENES: padding: 15px (muy estrechos).
+                    - INTERLINEADO: line-height: 1.3 (compacto).
+                    - Estructura: Doble columna (Sidebar izquierda 30% gris oscuro / Contenido derecha 70% blanco).
+                    - @page {{ size: A4; margin: 0; }} para impresión perfecta.
+
+                    DATOS DEL CANDIDATO:
+                    {texto_cv}
+
+                    OBJETIVO PROFESIONAL: {puesto}
+
+                    SALIDA: Devuelve ÚNICAMENTE el código HTML completo. Sin markdown, sin explicaciones.
+                    """
+                    
+                    try:
+                        # Llamamos a la IA
+                        html_code = consultar_gemini(prompt, api_key)
+                        
+                        # Limpiamos el código por si la IA pone ```html al principio
+                        html_code = html_code.replace("```html", "").replace("```", "")
+                        
+                        # --- SOLO MOSTRAMOS EL BOTÓN ---
+                        st.success("✅ ¡Diseño completado! Descárgalo aquí:")
+                        
+                        st.download_button(
+                            label="📥 DESCARGAR CV OPTIMIZADO (.html)",
+                            data=html_code,
+                            file_name=f"CV_Optimizado_{puesto.replace(' ', '_')}.html",
+                            mime="text/html"
+                        )
+                        
+                    except Exception as e:
+                        st.error(f"Error generando el diseño: {e}")
 
     # === PESTAÑA 3: CARTA ===
     with tab3:
