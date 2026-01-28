@@ -133,10 +133,10 @@ if texto_cv:
                 except Exception as e:
                     st.error(f"Error en el análisis: {e}")
 
-  # === PESTAÑA 2: CV VISUAL (MODO DISEÑO PREMIUM A4) ===
+  # === PESTAÑA 2: CV VISUAL (DISEÑO ARQUITECTO) ===
     with tab2:
-        st.header("Generador de CV (Diseño Ejecutivo)")
-        st.info("Genera un diseño limpio, legible y que ocupa toda la página A4.")
+        st.header("Generador de CV (Diseño Limpio y Cuadrado)")
+        st.info("Genera un diseño estructurado con espacio para foto y márgenes perfectos.")
         
         puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
         
@@ -145,49 +145,48 @@ if texto_cv:
             if not texto_cv:
                 st.error("Primero sube un PDF en el menú lateral.")
             else:
-                with st.spinner("⏳ Diseñando maquetación profesional..."):
+                with st.spinner("⏳ Diseñando estructura milimétrica..."):
                     
-                    # PROMPT CORREGIDO: MENOS COMPRESIÓN, MÁS LEGIBILIDAD
+                    # PROMPT TÉCNICO: CSS GRID + TIPOGRAFÍA CONTROLADA
                     prompt = f"""
-                    Actúa como un Diseñador Gráfico Senior.
-                    TU OBJETIVO: Generar un CV en HTML5 elegante que LLENE VISUALMENTE una página A4.
-                    
-                    NO uses letra minúscula. Quiero que se lea bien impreso.
+                    Actúa como un Maquetador Web Senior.
+                    TU OBJETIVO: Crear un CV HTML5 elegante, DE UNA SOLA PÁGINA, con estructura de dos columnas perfecta.
 
                     INSTRUCCIONES DE CONTENIDO:
-                    1. Resume solo si es estrictamente necesario, pero mantén el detalle importante.
-                    2. Destaca los logros con negritas.
-                    3. Usa un lenguaje profesional y persuasivo.
+                    1. NO uses mayúsculas para todo el texto. Usa mayúsculas SOLO para Títulos. El resto tipo oración normal.
+                    2. Resume el perfil y las experiencias para que quepan en una página.
+                    3. Mantén la información de contacto completa.
 
-                    INSTRUCCIONES DE DISEÑO (CSS OBLIGATORIO):
-                    - Fuente: 'Helvetica Neue', Helvetica, Arial, sans-serif.
-                    - TAMAÑO DE FUENTE CUERPO: 12pt (o 14px). ¡NO MENOS!
-                    - TÍTULO (NOMBRE): 28pt (Grande e impactante).
-                    - SUBTÍTULOS: 16pt, color azul oscuro (#2c3e50), con margen superior.
-                    - INTERLINEADO: 1.5 (Para que respire y ocupe espacio).
-                    - DISEÑO: Doble columna (Izquierda 30% color #2c3e50 texto blanco / Derecha 70% blanco texto oscuro).
-                    - PADDING: 40px (Márgenes generosos).
-                    - ALTO: min-height: 297mm (Forzar altura A4).
+                    INSTRUCCIONES DE DISEÑO (CSS ESTRICTO):
+                    - Usa la fuente 'Arial' o 'Helvetica'.
+                    - ESTRUCTURA: Usa 'display: flex'.
+                    - COLUMNA IZQUIERDA (Sidebar): Ancho 32%, Fondo color #2c3e50 (Azul oscuro), Texto blanco (#ecf0f1). Padding: 25px. Text-align: left.
+                    - COLUMNA DERECHA (Contenido): Ancho 68%, Fondo blanco, Texto gris oscuro (#333). Padding: 30px.
+                    - FOTO: Incluye un 'div' en la parte superior de la sidebar con clase 'photo-placeholder': ancho 100px, alto 100px, borde blanco 2px, centrado, con texto pequeño "FOTO".
+                    - NOMBRE: Fuente tamaño 22pt (NO MÁS GRANDE), Negrita, color #2c3e50. Debe caber en una línea.
+                    - TÍTULOS DE SECCIÓN: 14pt, Mayúsculas, con una línea debajo (border-bottom).
+                    - TEXTO CUERPO: 10pt o 11px. Interlineado 1.4.
+                    - MÁRGENES DE PÁGINA: 0. El diseño debe tocar los bordes.
 
                     DATOS DEL CANDIDATO:
                     {texto_cv}
 
                     OBJETIVO PROFESIONAL: {puesto}
 
-                    SALIDA: Devuelve ÚNICAMENTE el código HTML completo dentro de etiquetas html.
+                    SALIDA: Devuelve ÚNICAMENTE el código HTML completo.
                     """
                     
                     try:
                         # Llamamos a la IA
                         html_code = consultar_gemini(prompt, api_key)
                         
-                        # Limpieza de seguridad
+                        # Limpieza
                         html_code = html_code.replace("```html", "").replace("```", "")
                         
                         st.success("✅ ¡Diseño completado! Descárgalo aquí:")
                         
                         st.download_button(
-                            label="📥 DESCARGAR CV PRO (.html)",
+                            label="📥 DESCARGAR CV ARQUITECTO (.html)",
                             data=html_code,
                             file_name=f"CV_{puesto.replace(' ', '_')}.html",
                             mime="text/html"
@@ -195,7 +194,6 @@ if texto_cv:
                         
                     except Exception as e:
                         st.error(f"Error generando el diseño: {e}")
-
     # === PESTAÑA 3: CARTA ===
     with tab3:
         st.header("Carta de Presentación")
