@@ -126,7 +126,7 @@ if texto_cv:
                 """
                 
                 # Usamos el modelo configurado con temperatura 0
-                model = genai.GenerativeModel("gemini-1.5-flash", generation_config=config_auditor)
+                model = genai.GenerativeModel("gemini-2.5-flash", generation_config=config_auditor)
                 try:
                     response = model.generate_content(prompt)
                     st.markdown(response.text)
