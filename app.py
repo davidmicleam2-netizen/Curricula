@@ -65,7 +65,8 @@ texto_cv = extraer_texto_pdf(archivo_pdf)
 
 if texto_cv:
     # Definimos las pestañas
-    tab1, tab2, tab3, tab4 = st.tabs(["🕵️ Auditoría", "📄 CV Visual", "✉️ Carta Premium", "🎤 Entrevistas"])
+    # AHORA SON 5 PESTAÑAS
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Auditoría", "CV Visual", "Carta Premium", "Entrevista", "Feedback"])
 
  # === PESTAÑA 1: AUDITORÍA (MODO JUEZ ESTRICTO) ===
   # === PESTAÑA 1: EL AUDITOR COMPINCHE ===
