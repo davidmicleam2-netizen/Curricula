@@ -287,3 +287,58 @@ if texto_cv:
                         
                     except Exception as e:
                         st.error(f"Error en la simulación: {e}")
+                        
+    
+    # === PESTAÑA 5: FEEDBACK Y COMUNIDAD ===
+   
+    with tab5:
+        st.header("📢 Tu opinión impulsa este proyecto")
+        st.info("Esta herramienta está en fase Beta abierta. Tu feedback es vital para mejorarla.")
+        
+        # Columnas para organizar
+        col_feedback, col_contacto = st.columns(2)
+        
+        with col_feedback:
+            st.subheader("¿Te ha sido útil?")
+            st.write("Si has encontrado valor en la herramienta o has detectado un error, por favor deja un comentario en el hilo de la comunidad.")
+            
+            # Usamos un sistema de estrellas visual (solo visual por ahora)
+            valoracion = st.slider("¿Qué nota le pones a la IA?", 1, 10, 8)
+            
+            if valoracion >= 9:
+                st.balloons()
+                st.markdown("¡Gracias! ⭐⭐⭐⭐⭐")
+            
+            st.markdown("---")
+            
+            # BOTÓN ESTRATÉGICO: Manda a la gente a comentar a tu post
+            st.link_button("💬 Dejar Feedback en Udia", "https://udia.com/TU_ENLACE_DEL_POST_AQUI") 
+            st.caption("Tus comentarios ayudan a entrenar mejor a la IA.")
+
+        with col_contacto:
+            st.subheader("Reportar Bugs 🐛")
+            st.write("¿Algo ha fallado? ¿La IA se ha inventado datos? Escríbeme directamente.")
+            
+            cuerpo_email = "Hola David, he encontrado un error en la app..."
+            
+            # Generamos un enlace mailto para que se abra su correo
+            st.markdown(f'''
+                <a href="mailto:tuemail@gmail.com?subject=Feedback%20IA%20Career%20Manager&body={cuerpo_email}" style="text-decoration: none;">
+                    <button style="
+                        background-color: #e74c3c;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        text-align: center;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 16px;
+                        margin: 4px 2px;
+                        cursor: pointer;
+                        border-radius: 8px;">
+                        ✉️ Enviar Email de Soporte
+                    </button>
+                </a>
+                ''', unsafe_allow_html=True)
+            
+            st.warning("Nota: Al usar la versión gratuita, es posible que experimentes errores de 'Quota Limit' si hay mucho tráfico.")
