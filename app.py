@@ -140,96 +140,57 @@ with tab1:
                 st.error(f"Error: {e}")
 
 # === PESTAÑA 2: GENERADOR CV (V4 - MODO CAMISA DE FUERZA A4) ===
+# === PESTAÑA 2: GENERADOR CV (V5 - DISEÑO EQUILIBRADO Y ESPACIADO) ===
 with tab2:
     st.header("Generador de CV (Diseño Pro)")
-    st.info("Genera un CV bloqueado en 1 sola página.")
+    st.info("Genera un CV estético que llena la página correctamente.")
     
     puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
     
     if st.button("Generar Archivo HTML") and puesto:
-        with st.spinner("⏳ Diseñando y ajustando milímetros..."):
+        with st.spinner("⏳ Diseñando con espaciado profesional..."):
             
-            # 1. PREPARAR LA FOTO
+            # 1. PREPARAR LA FOTO (Misma lógica robusta)
             etiqueta_foto = ""
             if archivo_foto is not None:
                 try:
                     bytes_foto = archivo_foto.getvalue()
                     b64_foto = base64.b64encode(bytes_foto).decode('utf-8')
                     mime_type = archivo_foto.type 
-                    etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" alt="Foto" style="display:block; width:150px; height:150px; object-fit:cover; border-radius:50%; border:4px solid white; margin:0 auto 15px auto;">'
+                    # Aumentamos un poco el tamaño y el borde
+                    etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" alt="Foto" style="display:block; width:170px; height:170px; object-fit:cover; border-radius:50%; border:5px solid white; margin: 30px auto 30px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">'
                 except:
-                    etiqueta_foto = '<div style="width:150px; height:150px; background:#bdc3c7; border-radius:50%; margin:0 auto 15px auto;"></div>'
+                    etiqueta_foto = '<div style="width:170px; height:170px; background:#bdc3c7; border-radius:50%; margin: 30px auto;"></div>'
             else:
-                etiqueta_foto = '<div style="width:150px; height:150px; background:#bdc3c7; border-radius:50%; margin:0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:40px; color:white;">👤</div>'
+                etiqueta_foto = '<div style="width:170px; height:170px; background:#bdc3c7; border-radius:50%; margin: 30px auto; display:flex; align-items:center; justify-content:center; font-size:50px; color:white; border:5px solid white;">👤</div>'
 
-            # 2. EL PROMPT "CAMISA DE FUERZA"
+            # 2. PROMPT DE "RELLENO INTELIGENTE"
             prompt = f"""
-            Actúa como un Maquetador Web Experto.
-            OBJETIVO: CV HTML5 de 1 PÁGINA EXACTA (A4).
-
+            Actúa como un Diseñador Editorial Senior.
+            OBJETIVO: CV de 1 PÁGINA (A4) que se vea LLENO, ORDENADO y PROFESIONAL.
+            
             DATOS: {texto_cv}
-            PUESTO: {puesto}
+            PUESTO OBJETIVO: {puesto}
 
-            >>> REGLAS DE ORO CSS (COPIAR LITERALMENTE) <<<
-            Debes incluir este CSS exacto en el <style>:
+            >>> INSTRUCCIONES VISUALES (CSS) <<<
+            Usa este CSS para dar "aire" al diseño:
             
             @page {{ margin: 0; size: A4; }}
-            html, body {{ margin: 0; padding: 0; width: 210mm; height: 297mm; }}
+            html, body {{ margin: 0; padding: 0; background: #f4f4f4; height: 100%; font-family: 'Helvetica', 'Arial', sans-serif; }}
             
-            /* CONTENEDOR PRINCIPAL QUE BLOQUEA EL TAMAÑO */
             .a4-container {{
                 width: 210mm;
-                height: 296mm; /* 1mm menos para seguridad */
+                min-height: 297mm;
                 margin: 0 auto;
                 background: white;
                 display: flex;
-                overflow: hidden; /* ESTO ES LO QUE EVITA LA PÁGINA 2 */
-                box-sizing: border-box;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }}
 
-            .col-left {{ width: 35%; background: #2c3e50; color: white; padding: 20px; box-sizing: border-box; }}
-            .col-right {{ width: 65%; background: white; color: #333; padding: 25px; box-sizing: border-box; }}
-
-            /* AJUSTE DE FUENTES PARA QUE QUEPA TODO */
-            body {{ font-family: 'Helvetica', sans-serif; font-size: 12px; line-height: 1.3; }}
-            h1 {{ font-size: 22px; margin-bottom: 5px; text-transform: uppercase; color: #2c3e50; }}
-            h2 {{ font-size: 14px; border-bottom: 2px solid #f1c40f; padding-bottom: 3px; margin-top: 15px; margin-bottom: 8px; text-transform: uppercase; }}
-            p, li {{ margin-bottom: 4px; }}
-            ul {{ padding-left: 15px; margin: 0; }}
-
-            INSTRUCCIONES DE MAQUETACIÓN:
-            1. Crea un div principal: <div class="a4-container">
-            2. Dentro, pon dos columnas: <div class="col-left"> y <div class="col-right">.
-            3. IZQUIERDA: [[FOTO_AQUI]], Contacto, Habilidades (lista corta), Idiomas.
-            4. DERECHA: Nombre (h1), Puesto Objetivo (h3), Perfil (max 3 lineas), Experiencia (RESUMIDA), Educación.
-            
-            IMPORTANTE:
-            - SI EL TEXTO ES LARGO, CÓRTALO. Prioriza que quepa en una página.
-            - Usa el marcador [[FOTO_AQUI]] en la columna izquierda.
-
-            SALIDA: Solo código HTML completo.
-            """
-
-            try:
-                html_code = consultar_gemini(prompt, api_key)
-                html_code = html_code.replace("```html", "").replace("```", "")
-                
-                # Inyección de foto
-                if "[[FOTO_AQUI]]" in html_code:
-                    html_code = html_code.replace("[[FOTO_AQUI]]", etiqueta_foto)
-                else:
-                    html_code = etiqueta_foto + html_code
-
-                st.success("✅ CV Bloqueado en 1 Página")
-                
-                if es_premium:
-                    st.download_button("📥 DESCARGAR CV (.html)", html_code, f"CV_{puesto}.html", "text/html")
-                else:
-                    st.warning("⚠️ Activa tu licencia para descargar.")
-
-            except Exception as e:
-                st.error(f"Error: {e}")
-                                                                     
+            /* COLUMNA IZQUIERDA (Datos) */
+            .col-left {{
+                width: 32%;
+                background-color: #1e272e;     
                 
 # === PESTAÑA 3: CARTA PREMIUM ===
 with tab3:
