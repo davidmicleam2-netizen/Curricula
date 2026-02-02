@@ -149,18 +149,22 @@ with tab2:
     if st.button("Generar Archivo HTML") and puesto:
         with st.spinner("⏳ Diseñando, maquetando e incrustando foto..."):
             
-            # 1. PROCESAR LA FOTO (SI EXISTE)
+           # 1. PROCESAR LA FOTO (SI EXISTE)
             etiqueta_foto = ""
             if archivo_foto is not None:
                 # Convertimos la imagen a código Base64
                 bytes_foto = archivo_foto.getvalue()
                 b64_foto = base64.b64encode(bytes_foto).decode()
-                mime_type = archivo_foto.type # ej: image/jpeg
-                # Creamos el código HTML exacto para la imagen
-                etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border: 3px solid white; margin-bottom: 20px;">'
+                mime_type = archivo_foto.type 
+                
+                # --- CAMBIO AQUÍ: DE 120px A 180px ---
+                etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" style="width:180px; height:180px; border-radius:50%; object-fit:cover; border: 4px solid white; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">'
+                # (He añadido un poco de sombra y borde más grueso para que quede más "premium")
+
             else:
-                # Si no sube foto, ponemos un placeholder (Icono gris)
-                etiqueta_foto = '<div style="width:100px; height:100px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:40px;">👤</div>'
+                # Si no sube foto, el placeholder también grande
+                # --- CAMBIO AQUÍ TAMBIÉN: 180px ---
+                etiqueta_foto = '<div style="width:180px; height:180px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:60px; border: 4px solid white;">👤</div>'
 
             # 2. EL PROMPT (Modificado para inyectar la foto)
             prompt = f"""
