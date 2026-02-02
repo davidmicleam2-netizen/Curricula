@@ -205,7 +205,7 @@ with tab2:
             try:
                 # Generamos el HTML
                 html_code = consultar_gemini(prompt, api_key)
-                html_code = html_code.replace("```html", "").replace("```",
+                html_code = html_code.replace("```html", "").replace("```",)
                                                                      
                 
 # === PESTAÑA 3: CARTA PREMIUM ===
