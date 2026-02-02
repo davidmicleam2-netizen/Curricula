@@ -205,12 +205,16 @@ with tab3:
     
     if st.button("Redactar Carta") and oferta and empresa:
         with st.spinner("✍️ Escribiendo..."):
+            
+            # --- AQUÍ ESTABA EL ERROR (Faltaba esta línea de abajo) ---
             prompt = f"""
             Escribe una carta de presentación para {empresa} con tono {tono}.
             Usa el CV: {texto_cv} y la Oferta: {oferta}.
             Estructura: Gancho emocional, Evidencia de logros, Cierre con llamada a la acción.
             Añade al final un mensaje corto para LinkedIn.
             """
+            # -----------------------------------------------------------
+            
             try:
                 resultado = consultar_gemini(prompt, api_key)
                 st.markdown(resultado)
@@ -220,7 +224,7 @@ with tab3:
                     st.warning("🔒 Descarga bloqueada")
             except Exception as e:
                 st.error(f"Error: {e}")
-
+                
 # === PESTAÑA 4: ENTREVISTA ===
 with tab4:
     st.header("Entrenador de Entrevistas")
