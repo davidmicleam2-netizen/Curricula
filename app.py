@@ -205,7 +205,27 @@ with tab2:
             try:
                 # Generamos el HTML
                 html_code = consultar_gemini(prompt, api_key)
-                html_code = html_code.replace("```html", "").replace("```",)
+                html_code = html_code.replace("```html", "").replace("```", "")
+                
+                # 3. EL CAMBIAZO (Reemplazo seguro)
+                if "[[FOTO_AQUI]]" in html_code:
+                    html_code = html_code.replace("[[FOTO_AQUI]]", etiqueta_foto)
+                else:
+                    # Si la IA falló y no puso el marcador, lo intentamos inyectar al principio de la columna izquierda
+                    st.warning("⚠️ La IA olvidó el marcador de foto, intentando arreglarlo auto...")
+                    # Truco: buscamos un color de fondo típico para saber donde empieza la columna
+                    html_code = etiqueta_foto + html_code # (Solución de emergencia, pone la foto arriba del todo)
+
+                st.success("✅ ¡CV Maquetado y Listo!")
+                
+                if es_premium:
+                    st.download_button("📥 DESCARGAR CV (.html)", html_code, f"CV_{puesto}.html", "text/html")
+                else:
+                    st.warning("⚠️ Para descargar sin marcas de agua, activa tu licencia.")
+                    st.info("🔒 Descarga bloqueada (Modo Demo)")
+
+            except Exception as e:
+                st.error(f"Error: {e}")
                                                                      
                 
 # === PESTAÑA 3: CARTA PREMIUM ===
