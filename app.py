@@ -166,27 +166,34 @@ with tab2:
                 # --- CAMBIO AQUÍ TAMBIÉN: 180px ---
                 etiqueta_foto = '<div style="width:180px; height:180px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:60px; border: 4px solid white;">👤</div>'
 
-            # 2. EL PROMPT (Modificado para inyectar la foto)
+           # 2. EL PROMPT (Modificado para FORZAR 1 PÁGINA)
             prompt = f"""
             Actúa como un Diseñador Web experto.
-            TU OBJETIVO: Crear un CV en HTML5 + CSS3 moderno.
+            TU OBJETIVO: Crear un CV en HTML5 + CSS3 que ocupe EXACTAMENTE 1 PÁGINA A4 (210mm x 297mm).
             
             DATOS: {texto_cv}
             PUESTO: {puesto}
 
-            INSTRUCCIONES VISUALES:
-            - Diseño de 2 columnas (Izquierda oscura / Derecha clara).
+            INSTRUCCIONES TÉCNICAS (CRÍTICO):
+            1. CSS OBLIGATORIO PARA IMPRESIÓN:
+               - Añade esto al inicio del CSS:
+                 @page {{ margin: 0; size: A4; }}
+                 body {{ margin: 0; padding: 0; -webkit-print-color-adjust: exact; box-sizing: border-box; }}
+            2. DIMENSIONES:
+               - El contenedor principal debe tener: width: 210mm; min-height: 297mm; overflow: hidden;
+               - Ajusta el tamaño de fuente (10px - 12px) para que TODO quepa en una sola vista.
             
-            >>> INSTRUCCIÓN CLAVE PARA LA FOTO <<<
-            En la columna izquierda (arriba del todo), DEBES INSERTAR EXACTAMENTE ESTE CÓDIGO HTML (No lo cambies):
-            __FOTO_PLACEHOLDER__
-            
-            (Yo reemplazaré ese texto luego con la foto real).
+            DISEÑO VISUAL:
+            - 2 columnas (Izquierda oscura / Derecha clara).
+            - Columna Izquierda: Foto, Contacto, Skills.
+            - Columna Derecha: Nombre, Perfil, Experiencia, Educación.
 
-            RESTO DEL DISEÑO:
-            - Tipografía limpia (Sans-serif).
-            - Sección de Contacto, Skills, Experiencia y Educación.
-            - Añade marca de agua al final: "Documento certificado por IA Career Manager".
+            >>> FOTO <<<
+            En la columna izquierda, inserta: __FOTO_PLACEHOLDER__
+
+            CONTENIDO INTELIGENTE:
+            - Si el texto es muy largo, RESÚMELO. Prioriza la experiencia reciente.
+            - Elimina secciones irrelevantes para asegurar que no pase a la página 2.
 
             SALIDA: Solo código HTML.
             """
