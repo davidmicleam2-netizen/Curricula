@@ -52,6 +52,23 @@ with st.sidebar:
     st.write("Carga el CV del cliente:")
     archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
 
+# --- PEGAR ESTO DEBAJO DE LA LÍNEA 53 ---
+    st.markdown("---")
+    
+    # AQUÍ ESTÁ EL TRUCO: value="" (VACÍO)
+    with st.expander("🔓 Activar Licencia Premium"):
+        codigo_acceso = st.text_input("Introduce tu Serial Key:", type="password", value="") 
+    
+    # LISTA DE CÓDIGOS VÁLIDOS (Incluyendo el de la comunidad)
+    codigos_validos = ["PRO-X7-2026", "VIP-DAVID-LAUNCH", "UDIA-FEEDBACK"] 
+    
+    es_premium = False
+    if codigo_acceso in codigos_validos:
+        es_premium = True
+        st.success("✅ Licencia Activada")
+    elif codigo_acceso:
+        st.error("❌ Código incorrecto")
+
 # --- LÓGICA PRINCIPAL (EL CEREBRO) ---
 st.title("🚀 Agencia de Empleo con IA ")
 
