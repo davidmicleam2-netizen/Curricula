@@ -3,6 +3,7 @@ import google.generativeai as genai
 import PyPDF2 as pdf
 import os
 import datetime
+import base64  # <--- AÑADE ESTO AQUÍ
 
 # 1. CONFIGURACIÓN DE PÁGINA (SIEMPRE PRIMERO)
 st.set_page_config(
@@ -65,10 +66,14 @@ with st.sidebar:
         st.caption("🔒 Funciones de descarga bloqueadas")
 
     # B. EL PDF
+  # B. EL PDF
     st.write("Carga el CV del cliente:")
     archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
-
-    st.markdown("---")
+    
+    # --- NUEVO: SUBIR FOTO ---
+    st.write("Foto de perfil (Opcional):")
+    archivo_foto = st.file_uploader("Sube tu foto (.jpg/.png)", type=["jpg", "jpeg", "png"])
+    # -------------------------
 
    
 # 4. LÓGICA PRINCIPAL
@@ -134,35 +139,66 @@ with tab1:
             except Exception as e:
                 st.error(f"Error: {e}")
 
-# === PESTAÑA 2: GENERADOR CV ===
+# === PESTAÑA 2: GENERADOR CV (CON FOTO REAL) ===
 with tab2:
     st.header("Generador de CV (Diseño Pro)")
-    st.info("Genera un CV de 1 sola página, optimizado.")
+    st.info("Genera un CV de 1 sola página con tu foto integrada.")
     
     puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
     
     if st.button("Generar Archivo HTML") and puesto:
-        with st.spinner("⏳ Diseñando y certificando..."):
-            prompt = f"""
-            Actúa como un Experto en Maquetación de CVs.
-            TU OBJETIVO: Crear un CV HTML5 de 1 PÁGINA.
-            DATOS: {texto_cv}
-            OBJETIVO: {puesto}
-
-            INSTRUCCIONES DE DISEÑO:
-            - Usa 'display: flex', dos columnas.
-            - Fuente Arial, tamaño 11px.
+        with st.spinner("⏳ Diseñando, maquetando e incrustando foto..."):
             
-            >>> MARCA DE AGUA <<<
-            Al final, añade un div pequeño con texto gris: "Documento certificado por IA Career Manager - Formato ATS Validado 2026".
+            # 1. PROCESAR LA FOTO (SI EXISTE)
+            etiqueta_foto = ""
+            if archivo_foto is not None:
+                # Convertimos la imagen a código Base64
+                bytes_foto = archivo_foto.getvalue()
+                b64_foto = base64.b64encode(bytes_foto).decode()
+                mime_type = archivo_foto.type # ej: image/jpeg
+                # Creamos el código HTML exacto para la imagen
+                etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border: 3px solid white; margin-bottom: 20px;">'
+            else:
+                # Si no sube foto, ponemos un placeholder (Icono gris)
+                etiqueta_foto = '<div style="width:100px; height:100px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:40px;">👤</div>'
+
+            # 2. EL PROMPT (Modificado para inyectar la foto)
+            prompt = f"""
+            Actúa como un Diseñador Web experto.
+            TU OBJETIVO: Crear un CV en HTML5 + CSS3 moderno.
+            
+            DATOS: {texto_cv}
+            PUESTO: {puesto}
+
+            INSTRUCCIONES VISUALES:
+            - Diseño de 2 columnas (Izquierda oscura / Derecha clara).
+            
+            >>> INSTRUCCIÓN CLAVE PARA LA FOTO <<<
+            En la columna izquierda (arriba del todo), DEBES INSERTAR EXACTAMENTE ESTE CÓDIGO HTML (No lo cambies):
+            __FOTO_PLACEHOLDER__
+            
+            (Yo reemplazaré ese texto luego con la foto real).
+
+            RESTO DEL DISEÑO:
+            - Tipografía limpia (Sans-serif).
+            - Sección de Contacto, Skills, Experiencia y Educación.
+            - Añade marca de agua al final: "Documento certificado por IA Career Manager".
 
             SALIDA: Solo código HTML.
             """
+
             try:
+                # Generamos el HTML con la IA
                 html_code = consultar_gemini(prompt, api_key)
                 html_code = html_code.replace("```html", "").replace("```", "")
-                st.success("✅ ¡CV Certificado Listo!")
                 
+                # 3. EL CAMBIAZO FINAL (Python inyecta la foto real en el HTML)
+                # Buscamos la palabra clave __FOTO_PLACEHOLDER__ y pegamos el código de la imagen
+                html_code = html_code.replace("__FOTO_PLACEHOLDER__", etiqueta_foto)
+                
+                st.success("✅ ¡CV con Foto generado!")
+                
+                # EL MURO DE PAGO
                 if es_premium:
                     st.download_button("📥 DESCARGAR CV (.html)", html_code, f"CV_{puesto}.html", "text/html")
                 else:
@@ -171,7 +207,7 @@ with tab2:
 
             except Exception as e:
                 st.error(f"Error: {e}")
-
+                
 # === PESTAÑA 3: CARTA PREMIUM ===
 with tab3:
     st.header("Redactor de Cartas")
