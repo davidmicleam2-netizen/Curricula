@@ -208,7 +208,7 @@ with tab3:
             
             # --- AQUÍ ESTABA EL ERROR (Faltaba esta línea de abajo) ---
             prompt = f"""
-            Escribe una carta de presentación para {empresa} con tono {tono}.
+            Escribe una carta de presentación para {empresa} con {tono}.
             Usa el CV: {texto_cv} y la Oferta: {oferta}.
             Estructura: Gancho emocional, Evidencia de logros, Cierre con llamada a la acción.
             Añade al final un mensaje corto para LinkedIn.
