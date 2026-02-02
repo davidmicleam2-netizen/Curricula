@@ -275,7 +275,7 @@ with tab5:
         estilo = """
         <a href="mailto:{}?subject={}&body={}" style="text-decoration: none;">
             <div style="background-color: #FF4B4B; color: white; padding: 10px; border-radius: 8px; text-align: center;">
-                ✉️ Enviar Email a David
+                 Enviar Email a David
             </div>
         </a>
         """.format(email_destino, asunto, cuerpo)
