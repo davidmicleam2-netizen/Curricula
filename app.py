@@ -4,7 +4,7 @@ import PyPDF2 as pdf
 import os
 import datetime
 
-# 1. CONFIGURACIÓN DE PÁGINA
+# 1. CONFIGURACIÓN DE PÁGINA (SIEMPRE PRIMERO)
 st.set_page_config(
     page_title="IA Career Manager | Tu Agente de Empleo",
     page_icon="🚀",
@@ -33,12 +33,12 @@ def consultar_gemini(prompt, api_key):
     except Exception as e:
         return f"Error en la API: {e}"
 
-# 3. BARRA LATERAL (SIDEBAR) - LIMPIA Y ORDENADA
+# 3. BARRA LATERAL (SIDEBAR)
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/4712/4712035.png", width=100)
     st.title("Panel de Control")
     
-    # A. LA API KEY
+    # A. LA API KEY (Busca GOOGLE_API_KEY)
     if "GOOGLE_API_KEY" in st.secrets:
         api_key = st.secrets["GOOGLE_API_KEY"]
         st.success("✅ Motor IA Conectado")
@@ -55,9 +55,8 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # C. LA LICENCIA (TICKET VIP)
+    # C. LA LICENCIA
     with st.expander("🔓 Activar Licencia Premium"):
-        # value="" SIGNIFICA QUE EMPIEZA VACÍO (BLOQUEADO)
         codigo_acceso = st.text_input("Introduce tu Serial Key:", type="password", value="") 
     
     codigos_validos = ["PRO-X7-2026", "VIP-DAVID-LAUNCH", "UDIA-FEEDBACK"] 
@@ -71,7 +70,7 @@ with st.sidebar:
     else:
         st.caption("🔒 Funciones de descarga bloqueadas")
 
-# 4. LÓGICA PRINCIPAL (EL CEREBRO)
+# 4. LÓGICA PRINCIPAL
 st.title("🚀 Agencia de Empleo con IA")
 
 # FRENO 1: Si no hay API Key
@@ -126,9 +125,7 @@ with tab1:
             
             ### 📝 COMENTARIOS DEL EXPERTO:
             """
-            
             try:
-                # Usamos temperatura 0 para que sea obediente
                 config = genai.GenerationConfig(temperature=0.0)
                 model = genai.GenerativeModel("gemini-1.5-flash", generation_config=config)
                 response = model.generate_content(prompt)
@@ -163,10 +160,8 @@ with tab2:
             try:
                 html_code = consultar_gemini(prompt, api_key)
                 html_code = html_code.replace("```html", "").replace("```", "")
-                
                 st.success("✅ ¡CV Certificado Listo!")
                 
-                # EL MURO DE PAGO
                 if es_premium:
                     st.download_button("📥 DESCARGAR CV (.html)", html_code, f"CV_{puesto}.html", "text/html")
                 else:
@@ -205,7 +200,7 @@ with tab3:
             except Exception as e:
                 st.error(f"Error: {e}")
 
-# === PESTAÑA 4: ENTREVISTA (FLASHCARD) ===
+# === PESTAÑA 4: ENTREVISTA ===
 with tab4:
     st.header("Entrenador de Entrevistas")
     col1, col2 = st.columns(2)
