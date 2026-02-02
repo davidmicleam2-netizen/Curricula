@@ -127,7 +127,7 @@ with tab1:
             """
             try:
                 config = genai.GenerationConfig(temperature=0.0)
-                model = genai.GenerativeModel("gemini-1.5-flash", generation_config=config)
+                model = genai.GenerativeModel("gemini-2.5-flash", generation_config=config)
                 response = model.generate_content(prompt)
                 st.markdown(response.text)
             except Exception as e:
