@@ -299,56 +299,54 @@ if api_key:  # <--- Fíjate que esto termina en dos puntos
                         st.error(f"Error en la simulación: {e}")
                         
     
-    # === PESTAÑA 5: FEEDBACK Y COMUNIDAD ===
-   
+   # === PESTAÑA 5: SOPORTE Y COMUNIDAD ===
     with tab5:
-        st.header("📢 Tu opinión impulsa este proyecto")
-        st.info("Esta herramienta está en fase Beta abierta. Tu feedback es vital para mejorarla.")
+        st.header("🤝 Centro de Ayuda y Feedback")
+        st.info("¿Te ha gustado? Ayúdanos a mejorar o reporta errores.")
         
-        # Columnas para organizar
         col_feedback, col_contacto = st.columns(2)
         
+        # COLUMNA IZQUIERDA: COMUNIDAD
         with col_feedback:
-            st.subheader("¿Te ha sido útil?")
-            st.write("Si has encontrado valor en la herramienta o has detectado un error, por favor deja un comentario en el hilo de la comunidad.")
+            st.subheader("📢 Tu opinión cuenta")
+            st.write("Si la herramienta te ha servido, deja un comentario en nuestra comunidad para que sigamos mejorando.")
             
-            # Usamos un sistema de estrellas visual (solo visual por ahora)
-            valoracion = st.slider("¿Qué nota le pones a la IA?", 1, 10, 8)
-            
-            if valoracion >= 9:
-                st.balloons()
-                st.markdown("¡Gracias! ⭐⭐⭐⭐⭐")
+            valoracion = st.feedback("stars") # Nuevo sistema de estrellas nativo de Streamlit (más bonito)
+            if valoracion:
+                st.write("¡Gracias por tu valoración! ⭐")
             
             st.markdown("---")
-            
-            # BOTÓN ESTRATÉGICO: Manda a la gente a comentar a tu post
-            st.link_button("💬 Dejar Feedback en Udia", "https://udia.com/TU_ENLACE_DEL_POST_AQUI") 
-            st.caption("Tus comentarios ayudan a entrenar mejor a la IA.")
+            # AQUÍ PEGARÁS TU LINK DE UDIA CUANDO LO TENGAS
+            st.link_button("💬 Ir al Hilo de la Comunidad (Udia)", "https://udia.com") 
 
+        # COLUMNA DERECHA: CONTACTO DIRECTO
         with col_contacto:
-            st.subheader("Reportar Bugs 🐛")
-            st.write("¿Algo ha fallado? ¿La IA se ha inventado datos? Escríbeme directamente.")
+            st.subheader("🐛 Reportar un Problema")
+            st.write("¿La IA ha fallado? ¿Tienes una idea? Envíame un correo directo.")
             
-            cuerpo_email = "Hola David, he encontrado un error en la app..."
+            # TU CORREO REAL CONFIGURADO
+            email_destino = "davidmicleam2@gmail.com"
+            asunto = "Feedback IA Career Manager"
+            cuerpo = "Hola David, he estado probando la app y..."
             
-            # Generamos un enlace mailto para que se abra su correo
-            st.markdown(f'''
-                <a href="mailto:tuemail@gmail.com?subject=Feedback%20IA%20Career%20Manager&body={cuerpo_email}" style="text-decoration: none;">
-                    <button style="
-                        background-color: #e74c3c;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        text-align: center;
-                        text-decoration: none;
-                        display: inline-block;
-                        font-size: 16px;
-                        margin: 4px 2px;
-                        cursor: pointer;
-                        border-radius: 8px;">
-                        ✉️ Enviar Email de Soporte
-                    </button>
-                </a>
-                ''', unsafe_allow_html=True)
+            # Botón HTML con estilo profesional
+            estilo_boton = """
+            <a href="mailto:{}?subject={}&body={}" style="text-decoration: none;">
+                <div style="
+                    background-color: #FF4B4B;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-weight: bold;
+                    display: inline-block;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                ">
+                    ✉️ Enviar Email a David
+                </div>
+            </a>
+            """.format(email_destino, asunto, cuerpo)
             
-            st.warning("Nota: Al usar la versión gratuita, es posible que experimentes errores de 'Quota Limit' si hay mucho tráfico.")
+            st.markdown(estilo_boton, unsafe_allow_html=True)
+            
+            st.caption("📧 Se abrirá tu gestor de correo predeterminado.")
