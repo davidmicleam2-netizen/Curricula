@@ -4,8 +4,13 @@ from pypdf import PdfReader
 import os
 import datetime
 
-# --- CONFIGURACIÓN ---
-st.set_page_config(page_title="IA Career Manager", page_icon="🚀", layout="wide")
+# CONFIGURACIÓN DE PÁGINA (Poner al principio del todo)
+st.set_page_config(
+    page_title="IA Career Manager | Tu Agente de Empleo",
+    page_icon="🚀",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 # --- FUNCIONES ---
 def extraer_texto_pdf(uploaded_file):
