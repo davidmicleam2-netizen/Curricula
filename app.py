@@ -139,85 +139,74 @@ with tab1:
             except Exception as e:
                 st.error(f"Error: {e}")
 
-# === PESTAÑA 2: GENERADOR CV (CON FOTO REAL) ===
+# === PESTAÑA 2: GENERADOR CV (V3 - LETRA GRANDE Y FOTO FIX) ===
 with tab2:
     st.header("Generador de CV (Diseño Pro)")
-    st.info("Genera un CV de 1 sola página con tu foto integrada.")
+    st.info("Genera un CV de 1 sola página con letra legible y foto integrada.")
     
     puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
     
     if st.button("Generar Archivo HTML") and puesto:
-        with st.spinner("⏳ Diseñando, maquetando e incrustando foto..."):
+        with st.spinner("⏳ Diseñando, maquetando e inyectando foto..."):
             
-           # 1. PROCESAR LA FOTO (SI EXISTE)
+            # 1. PREPARAR LA FOTO (Código Robustecido)
             etiqueta_foto = ""
             if archivo_foto is not None:
-                # Convertimos la imagen a código Base64
-                bytes_foto = archivo_foto.getvalue()
-                b64_foto = base64.b64encode(bytes_foto).decode()
-                mime_type = archivo_foto.type 
-                
-                # --- CAMBIO AQUÍ: DE 120px A 180px ---
-                etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" style="width:180px; height:180px; border-radius:50%; object-fit:cover; border: 4px solid white; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">'
-                # (He añadido un poco de sombra y borde más grueso para que quede más "premium")
-
+                try:
+                    # Convertimos la imagen a código Base64
+                    bytes_foto = archivo_foto.getvalue()
+                    b64_foto = base64.b64encode(bytes_foto).decode('utf-8') # Aseguramos utf-8
+                    mime_type = archivo_foto.type 
+                    
+                    # CÓDIGO HTML DE LA IMAGEN (AQUÍ ESTÁ LA CLAVE)
+                    # Usamos 'display:block' y medidas fijas para evitar errores
+                    etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" alt="Foto Perfil" style="display: block; width: 160px; height: 160px; object-fit: cover; border-radius: 50%; border: 4px solid white; margin: 0 auto 20px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">'
+                except Exception as e:
+                    st.error(f"Error procesando la imagen: {e}")
+                    etiqueta_foto = '<div style="width:160px; height:160px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:50px; border: 4px solid white;">👤</div>'
             else:
-                # Si no sube foto, el placeholder también grande
-                # --- CAMBIO AQUÍ TAMBIÉN: 180px ---
-                etiqueta_foto = '<div style="width:180px; height:180px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:60px; border: 4px solid white;">👤</div>'
+                # Placeholder si no hay foto
+                etiqueta_foto = '<div style="width:160px; height:160px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:50px; border: 4px solid white;">👤</div>'
 
-           # 2. EL PROMPT (Modificado para FORZAR 1 PÁGINA)
+            # 2. EL PROMPT (Ajustado para LETRA MÁS GRANDE y ANCHO)
             prompt = f"""
-            Actúa como un Diseñador Web experto.
-            TU OBJETIVO: Crear un CV en HTML5 + CSS3 que ocupe EXACTAMENTE 1 PÁGINA A4 (210mm x 297mm).
+            Actúa como un Diseñador Web Senior.
+            TU OBJETIVO: Crear un CV HTML5 moderno y MUY LEGIBLE.
             
             DATOS: {texto_cv}
             PUESTO: {puesto}
 
-            INSTRUCCIONES TÉCNICAS (CRÍTICO):
-            1. CSS OBLIGATORIO PARA IMPRESIÓN:
-               - Añade esto al inicio del CSS:
-                 @page {{ margin: 0; size: A4; }}
-                 body {{ margin: 0; padding: 0; -webkit-print-color-adjust: exact; box-sizing: border-box; }}
-            2. DIMENSIONES:
-               - El contenedor principal debe tener: width: 210mm; min-height: 297mm; overflow: hidden;
-               - Ajusta el tamaño de fuente (10px - 12px) para que TODO quepa en una sola vista.
+            INSTRUCCIONES DE DISEÑO (CSS CRÍTICO):
+            1. FUENTES: Usa 'Helvetica', 'Arial', sans-serif.
+               - TAMAÑO BASE (body): 14px (No menos).
+               - TÍTULOS (h1, h2): 24px - 32px.
+               - INTERLINEADO: 1.5 (Para que se lea bien).
             
-            DISEÑO VISUAL:
-            - 2 columnas (Izquierda oscura / Derecha clara).
-            - Columna Izquierda: Foto, Contacto, Skills.
-            - Columna Derecha: Nombre, Perfil, Experiencia, Educación.
+            2. LAYOUT (2 Columnas):
+               - Columna Izquierda (AZUL OSCURO #2c3e50): Ancho 35%. Texto blanco. Padding: 20px.
+               - Columna Derecha (BLANCO): Ancho 65%. Texto gris #333. Padding: 30px.
+            
+            3. ESTRUCTURA DE PÁGINA:
+               - Ancho total: 210mm (A4).
+               - Sin márgenes blancos extraños (@page {{ margin: 0; }}).
 
-            >>> FOTO <<<
-            En la columna izquierda, inserta: __FOTO_PLACEHOLDER__
+            >>> INSTRUCCIÓN DE LA FOTO (IMPORTANTE) <<<
+            En la Columna Izquierda, lo PRIMERO que debes poner es este marcador exacto:
+            [[FOTO_AQUI]]
+            (No añadas ninguna etiqueta <img>, solo pon ese texto marcador).
 
-            CONTENIDO INTELIGENTE:
-            - Si el texto es muy largo, RESÚMELO. Prioriza la experiencia reciente.
-            - Elimina secciones irrelevantes para asegurar que no pase a la página 2.
-
-            SALIDA: Solo código HTML.
+            CONTENIDO:
+            - Izquierda: [[FOTO_AQUI]], Contacto (con iconos), Habilidades, Idiomas.
+            - Derecha: Nombre (Muy grande), Perfil, Experiencia, Educación.
+            
+            SALIDA: Solo el código HTML completo.
             """
 
             try:
-                # Generamos el HTML con la IA
+                # Generamos el HTML
                 html_code = consultar_gemini(prompt, api_key)
-                html_code = html_code.replace("```html", "").replace("```", "")
-                
-                # 3. EL CAMBIAZO FINAL (Python inyecta la foto real en el HTML)
-                # Buscamos la palabra clave __FOTO_PLACEHOLDER__ y pegamos el código de la imagen
-                html_code = html_code.replace("__FOTO_PLACEHOLDER__", etiqueta_foto)
-                
-                st.success("✅ ¡CV con Foto generado!")
-                
-                # EL MURO DE PAGO
-                if es_premium:
-                    st.download_button("📥 DESCARGAR CV (.html)", html_code, f"CV_{puesto}.html", "text/html")
-                else:
-                    st.warning("⚠️ Para descargar sin marcas de agua, activa tu licencia.")
-                    st.info("🔒 Descarga bloqueada (Modo Demo)")
-
-            except Exception as e:
-                st.error(f"Error: {e}")
+                html_code = html_code.replace("```html", "").replace("```",
+                                                                     
                 
 # === PESTAÑA 3: CARTA PREMIUM ===
 with tab3:
