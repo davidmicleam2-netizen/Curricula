@@ -63,10 +63,14 @@ if not archivo_pdf:
 # 3. SI LLEGAMOS AQUÍ, ES QUE TODO ESTÁ BIEN
 texto_cv = extraer_texto_pdf(archivo_pdf)
 
-if texto_cv:
-    # Definimos las pestañas
-    # AHORA SON 5 PESTAÑAS
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Auditoría", "CV Visual", "Carta Premium", "Entrevista", "Feedback"])
+# Línea 66 (aprox)
+if api_key:  # <--- Fíjate que esto termina en dos puntos
+    
+    # Línea 69 (AQUÍ ESTABA EL ERROR)
+    # Tienes que empujarla para que esté ALINEADA dentro del if
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Auditoría", "CV Visual", "Carta Premium", "Entrevista", "Feedback"])
+    
+    # El resto del código también debe estar alineado igual...
 
  # === PESTAÑA 1: AUDITORÍA (MODO JUEZ ESTRICTO) ===
   # === PESTAÑA 1: EL AUDITOR COMPINCHE ===
