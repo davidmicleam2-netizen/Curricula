@@ -48,14 +48,8 @@ with st.sidebar:
             st.warning("⚠️ Necesitas la API Key para arrancar.")
 
     st.markdown("---")
-    
-    # B. EL PDF
-    st.write("Carga el CV del cliente:")
-    archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
 
-    st.markdown("---")
-
-    # C. LA LICENCIA
+     # C. LA LICENCIA
     with st.expander("🔓 Activar Licencia Premium"):
         codigo_acceso = st.text_input("Introduce tu Serial Key:", type="password", value="") 
     
@@ -70,6 +64,13 @@ with st.sidebar:
     else:
         st.caption("🔒 Funciones de descarga bloqueadas")
 
+    # B. EL PDF
+    st.write("Carga el CV del cliente:")
+    archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
+
+    st.markdown("---")
+
+   
 # 4. LÓGICA PRINCIPAL
 st.title("🚀 Agencia de Empleo con IA")
 
