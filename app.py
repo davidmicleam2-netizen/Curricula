@@ -272,11 +272,13 @@ with tab5:
         asunto = "Feedback IA Career Manager"
         cuerpo = "Hola David, he encontrado un error..."
         
+        # AQUÍ ESTABA EL ERROR: Faltaban las comillas de cierre """ antes del .format
         estilo = """
         <a href="mailto:{}?subject={}&body={}" style="text-decoration: none;">
             <div style="background-color: #FF4B4B; color: white; padding: 10px; border-radius: 8px; text-align: center;">
-                 Enviar Email a David
+                ✉️ Enviar Email a David
             </div>
         </a>
         """.format(email_destino, asunto, cuerpo)
+        
         st.markdown(estilo, unsafe_allow_html=True)
