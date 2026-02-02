@@ -139,90 +139,93 @@ with tab1:
             except Exception as e:
                 st.error(f"Error: {e}")
 
-# === PESTAÑA 2: GENERADOR CV (V3 - LETRA GRANDE Y FOTO FIX) ===
+# === PESTAÑA 2: GENERADOR CV (V4 - MODO CAMISA DE FUERZA A4) ===
 with tab2:
     st.header("Generador de CV (Diseño Pro)")
-    st.info("Genera un CV de 1 sola página con letra legible y foto integrada.")
+    st.info("Genera un CV bloqueado en 1 sola página.")
     
     puesto = st.text_input("Puesto Objetivo:", placeholder="Ej: Administrativo Contable")
     
     if st.button("Generar Archivo HTML") and puesto:
-        with st.spinner("⏳ Diseñando, maquetando e inyectando foto..."):
+        with st.spinner("⏳ Diseñando y ajustando milímetros..."):
             
-            # 1. PREPARAR LA FOTO (Código Robustecido)
+            # 1. PREPARAR LA FOTO
             etiqueta_foto = ""
             if archivo_foto is not None:
                 try:
-                    # Convertimos la imagen a código Base64
                     bytes_foto = archivo_foto.getvalue()
-                    b64_foto = base64.b64encode(bytes_foto).decode('utf-8') # Aseguramos utf-8
+                    b64_foto = base64.b64encode(bytes_foto).decode('utf-8')
                     mime_type = archivo_foto.type 
-                    
-                    # CÓDIGO HTML DE LA IMAGEN (AQUÍ ESTÁ LA CLAVE)
-                    # Usamos 'display:block' y medidas fijas para evitar errores
-                    etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" alt="Foto Perfil" style="display: block; width: 160px; height: 160px; object-fit: cover; border-radius: 50%; border: 4px solid white; margin: 0 auto 20px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">'
-                except Exception as e:
-                    st.error(f"Error procesando la imagen: {e}")
-                    etiqueta_foto = '<div style="width:160px; height:160px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:50px; border: 4px solid white;">👤</div>'
+                    etiqueta_foto = f'<img src="data:{mime_type};base64,{b64_foto}" alt="Foto" style="display:block; width:150px; height:150px; object-fit:cover; border-radius:50%; border:4px solid white; margin:0 auto 15px auto;">'
+                except:
+                    etiqueta_foto = '<div style="width:150px; height:150px; background:#bdc3c7; border-radius:50%; margin:0 auto 15px auto;"></div>'
             else:
-                # Placeholder si no hay foto
-                etiqueta_foto = '<div style="width:160px; height:160px; background:#bdc3c7; border-radius:50%; margin:0 auto 20px auto; display:flex; align-items:center; justify-content:center; font-size:50px; border: 4px solid white;">👤</div>'
+                etiqueta_foto = '<div style="width:150px; height:150px; background:#bdc3c7; border-radius:50%; margin:0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:40px; color:white;">👤</div>'
 
-            # 2. EL PROMPT (Ajustado para LETRA MÁS GRANDE y ANCHO)
+            # 2. EL PROMPT "CAMISA DE FUERZA"
             prompt = f"""
-            Actúa como un Diseñador Web Senior.
-            TU OBJETIVO: Crear un CV HTML5 moderno y MUY LEGIBLE.
-            
+            Actúa como un Maquetador Web Experto.
+            OBJETIVO: CV HTML5 de 1 PÁGINA EXACTA (A4).
+
             DATOS: {texto_cv}
             PUESTO: {puesto}
 
-            INSTRUCCIONES DE DISEÑO (CSS CRÍTICO):
-            1. FUENTES: Usa 'Helvetica', 'Arial', sans-serif.
-               - TAMAÑO BASE (body): 14px (No menos).
-               - TÍTULOS (h1, h2): 24px - 32px.
-               - INTERLINEADO: 1.5 (Para que se lea bien).
+            >>> REGLAS DE ORO CSS (COPIAR LITERALMENTE) <<<
+            Debes incluir este CSS exacto en el <style>:
             
-            2. LAYOUT (2 Columnas):
-               - Columna Izquierda (AZUL OSCURO #2c3e50): Ancho 35%. Texto blanco. Padding: 20px.
-               - Columna Derecha (BLANCO): Ancho 65%. Texto gris #333. Padding: 30px.
+            @page {{ margin: 0; size: A4; }}
+            html, body {{ margin: 0; padding: 0; width: 210mm; height: 297mm; }}
             
-            3. ESTRUCTURA DE PÁGINA:
-               - Ancho total: 210mm (A4).
-               - Sin márgenes blancos extraños (@page {{ margin: 0; }}).
+            /* CONTENEDOR PRINCIPAL QUE BLOQUEA EL TAMAÑO */
+            .a4-container {{
+                width: 210mm;
+                height: 296mm; /* 1mm menos para seguridad */
+                margin: 0 auto;
+                background: white;
+                display: flex;
+                overflow: hidden; /* ESTO ES LO QUE EVITA LA PÁGINA 2 */
+                box-sizing: border-box;
+            }}
 
-            >>> INSTRUCCIÓN DE LA FOTO (IMPORTANTE) <<<
-            En la Columna Izquierda, lo PRIMERO que debes poner es este marcador exacto:
-            [[FOTO_AQUI]]
-            (No añadas ninguna etiqueta <img>, solo pon ese texto marcador).
+            .col-left {{ width: 35%; background: #2c3e50; color: white; padding: 20px; box-sizing: border-box; }}
+            .col-right {{ width: 65%; background: white; color: #333; padding: 25px; box-sizing: border-box; }}
 
-            CONTENIDO:
-            - Izquierda: [[FOTO_AQUI]], Contacto (con iconos), Habilidades, Idiomas.
-            - Derecha: Nombre (Muy grande), Perfil, Experiencia, Educación.
+            /* AJUSTE DE FUENTES PARA QUE QUEPA TODO */
+            body {{ font-family: 'Helvetica', sans-serif; font-size: 12px; line-height: 1.3; }}
+            h1 {{ font-size: 22px; margin-bottom: 5px; text-transform: uppercase; color: #2c3e50; }}
+            h2 {{ font-size: 14px; border-bottom: 2px solid #f1c40f; padding-bottom: 3px; margin-top: 15px; margin-bottom: 8px; text-transform: uppercase; }}
+            p, li {{ margin-bottom: 4px; }}
+            ul {{ padding-left: 15px; margin: 0; }}
+
+            INSTRUCCIONES DE MAQUETACIÓN:
+            1. Crea un div principal: <div class="a4-container">
+            2. Dentro, pon dos columnas: <div class="col-left"> y <div class="col-right">.
+            3. IZQUIERDA: [[FOTO_AQUI]], Contacto, Habilidades (lista corta), Idiomas.
+            4. DERECHA: Nombre (h1), Puesto Objetivo (h3), Perfil (max 3 lineas), Experiencia (RESUMIDA), Educación.
             
-            SALIDA: Solo el código HTML completo.
+            IMPORTANTE:
+            - SI EL TEXTO ES LARGO, CÓRTALO. Prioriza que quepa en una página.
+            - Usa el marcador [[FOTO_AQUI]] en la columna izquierda.
+
+            SALIDA: Solo código HTML completo.
             """
 
             try:
-                # Generamos el HTML
                 html_code = consultar_gemini(prompt, api_key)
                 html_code = html_code.replace("```html", "").replace("```", "")
                 
-                # 3. EL CAMBIAZO (Reemplazo seguro)
+                # Inyección de foto
                 if "[[FOTO_AQUI]]" in html_code:
                     html_code = html_code.replace("[[FOTO_AQUI]]", etiqueta_foto)
                 else:
-                    # Si la IA falló y no puso el marcador, lo intentamos inyectar al principio de la columna izquierda
-                    st.warning("⚠️ La IA olvidó el marcador de foto, intentando arreglarlo auto...")
-                    # Truco: buscamos un color de fondo típico para saber donde empieza la columna
-                    html_code = etiqueta_foto + html_code # (Solución de emergencia, pone la foto arriba del todo)
+                    html_code = etiqueta_foto + html_code
 
-                st.success("✅ ¡CV Maquetado y Listo!")
+                st.success("✅ CV Bloqueado en 1 Página")
                 
                 if es_premium:
                     st.download_button("📥 DESCARGAR CV (.html)", html_code, f"CV_{puesto}.html", "text/html")
                 else:
-                    st.warning("⚠️ Para descargar sin marcas de agua, activa tu licencia.")
-                    st.info("🔒 Descarga bloqueada (Modo Demo)")
+                    st.warning("⚠️ Activa tu licencia para descargar.")
 
             except Exception as e:
                 st.error(f"Error: {e}")
