@@ -38,15 +38,43 @@ with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/4712/4712035.png", width=100)
     st.title("Panel de Control")
     
-   # 1. Buscamos la clave en los 'Secretos'
+    # 1. LA GASOLINA (Google API Key)
+    # Intentamos cogerla de los secretos primero
     if "GOOGLE_API_KEY" in st.secrets:
         api_key = st.secrets["GOOGLE_API_KEY"]
-        st.success("✅ Licencia Activada")  # <--- Fíjate que está alineado con la línea de arriba
+        st.success("✅ Motor IA Conectado")
     else:
-        # 2. Si estamos en local
-        api_key = st.text_input("Tu Google API Key", type="password")
+        # Si no hay secretos, pedimos la clave manual
+        api_key = st.text_input("Tu Google API Key", type="password", help="Pega aquí tu clave de Google AI Studio")
         if not api_key:
-            st.warning("⚠️ Introduce la clave para continuar.")
+            st.warning("⚠️ Necesitas la API Key para arrancar.")
+
+    st.markdown("---")
+    
+    # 2. EL DOCUMENTO (Subir PDF)
+    st.write("Carga el CV del cliente:")
+    archivo_pdf = st.file_uploader("Sube el PDF aquí", type="pdf")
+
+    st.markdown("---")
+
+    # 3. EL TICKET VIP (Licencia) - AQUÍ VA LO DE UDIA
+    # Fíjate que value="" está VACÍO para que empiece bloqueado
+    with st.expander("🔓 Activar Licencia Premium"):
+        codigo_acceso = st.text_input("Introduce tu Serial Key:", type="password", value="") 
+    
+    # LISTA DE CÓDIGOS VÁLIDOS
+    codigos_validos = ["PRO-X7-2026", "VIP-DAVID-LAUNCH", "UDIA-FEEDBACK"] 
+    
+    # Lógica del semáforo
+    es_premium = False
+    if codigo_acceso in codigos_validos:
+        es_premium = True
+        st.success("✅ Licencia Activada")
+    elif codigo_acceso:
+        st.error("❌ Código incorrecto")
+    else:
+        # Si está vacío, no mostramos error, solo aviso
+        st.caption("🔒 Funciones de descarga bloqueadas")
 
     st.markdown("---")
     st.write("Carga el CV del cliente:")
