@@ -238,7 +238,7 @@ with tab5:
         val = st.feedback("stars")
         if val:
             st.write("¡Gracias! ⭐")
-        st.link_button("💬 Ir a la Comunidad (Udia)", "https://udia.com") 
+       
 
     with col_cont:
         st.subheader("🐛 Reportar Bug")
